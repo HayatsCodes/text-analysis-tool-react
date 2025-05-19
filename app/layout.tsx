@@ -5,6 +5,7 @@ import React from "react";
 import { SidebarLayout } from "./components/sidebar-layout/sidebar-layout";
 import { SidebarStateProvider } from "./components/sidebar-layout/sidebar-state-context";
 import { Toaster } from 'react-hot-toast';
+import { FileProvider } from "./contexts/file-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +35,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <SidebarStateProvider>
-          <SidebarLayout>{children}</SidebarLayout>
-        </SidebarStateProvider>
+        <FileProvider>
+          <SidebarStateProvider>
+            <SidebarLayout>{children}</SidebarLayout>
+          </SidebarStateProvider>
+        </FileProvider>
         <Toaster
           position="top-right"
           toastOptions={{

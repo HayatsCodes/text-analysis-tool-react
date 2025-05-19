@@ -1,46 +1,71 @@
-import React from "react";
-import Link from "next/link";
+"use client";
 
-export interface SelectColumnProps {
-  columns: string[];
-  selectedColumns: string[];
-  onChange: (col: string) => void;
-  onNext: () => void;
+import { useState } from "react";
+import { useFile } from "../../contexts/file-context";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+
+interface SelectColumnProps {
+  onNext: (selectedColumns: string[]) => void;
 }
 
-export function SelectColumn({ columns, selectedColumns, onChange, onNext }: SelectColumnProps) {
+export function SelectColumn({ onNext }: SelectColumnProps) {
+  const { fileData } = useFile();
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+
+  if (!fileData?.columns) {
+    return (
+      <Card className="p-6 text-center text-gray-500">
+        No file data available. Please upload a file first.
+      </Card>
+    );
+  }
+
+  function handleColumnSelect(column: string) {
+    setSelectedColumns(prev => 
+      prev.includes(column) 
+        ? prev.filter(col => col !== column)
+        : [...prev, column]
+    );
+  }
+
+  function handleNext() {
+    onNext(selectedColumns);
+  }
+
   return (
-    <div className="flex flex-col items-center w-full max-w-3xl">
-      <div className="mb-8 text-xl font-semibold">Select Column to Analyze</div>
-      <div className="border rounded-lg p-12 flex flex-col items-center w-full bg-white shadow-sm">
-        <div className="grid grid-cols-3 gap-8 mb-8 w-full">
-          {columns.map(col => (
-            <label key={col} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-              <input
-                type="checkbox"
-                checked={selectedColumns.includes(col)}
-                onChange={() => onChange(col)}
-                className="w-5 h-5"
-              />
-              <span className="text-lg">{col}</span>
+    <Card className="p-6 w-full max-w-2xl">
+      <h2 className="text-xl font-semibold mb-6">Select Columns to Analyze</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        {fileData.columns.map((column) => (
+          <div
+            key={column}
+            className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors"
+          >
+            <Checkbox
+              id={column}
+              checked={selectedColumns.includes(column)}
+              onCheckedChange={() => handleColumnSelect(column)}
+            />
+            <label
+              htmlFor={column}
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              {column}
             </label>
-          ))}
-        </div>
-        <Link 
-          href={{ 
-            pathname: "/preprocessing", 
-            query: { columns: selectedColumns.join(",") } 
-          }}
-          className={`rounded-full px-8 py-3 font-semibold shadow transition-colors text-lg ${
-            selectedColumns.length === 0 
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
-          onClick={onNext}
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-center">
+        <Button
+          onClick={handleNext}
+          disabled={selectedColumns.length === 0}
+          className="bg-blue-600 hover:bg-blue-700 rounded-[45px] px-6 py-2 cursor-pointer"
         >
           Start Analysis
-        </Link>
+        </Button>
       </div>
-    </div>
+    </Card>
   );
 } 

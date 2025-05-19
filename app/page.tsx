@@ -5,11 +5,8 @@ import { FileUpload } from "./components/file-upload/file-upload";
 import { SelectColumn } from "./components/select-column/select-column";
 import { useSidebarState } from "./components/sidebar-layout/sidebar-state-context";
 
-const columns = ["Title", "Detail", "Author", "Date", "Category", "Views"];
-
 export default function Home() {
   const [step, setStep] = useState<1 | 2>(1);
-  const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const { setCurrentChild } = useSidebarState();
 
   function handleUploadComplete() {
@@ -21,10 +18,9 @@ export default function Home() {
     setStep(2);
   }
 
-  function handleColumnSelect(col: string) {
-    setSelectedColumns(cols =>
-      cols.includes(col) ? cols.filter(c => c !== col) : [...cols, col]
-    );
+  function handleColumnSelection(selectedColumns: string[]) {
+    // Handle the selected columns here
+    console.log('Selected columns:', selectedColumns);
   }
 
   return (
@@ -38,12 +34,7 @@ export default function Home() {
         </div>
       )}
       {step === 2 && (
-        <SelectColumn
-          columns={columns}
-          selectedColumns={selectedColumns}
-          onChange={handleColumnSelect}
-          onNext={() => {}}
-        />
+        <SelectColumn onNext={handleColumnSelection} />
       )}
     </div>
   );

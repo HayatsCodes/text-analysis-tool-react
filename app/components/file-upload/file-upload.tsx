@@ -3,7 +3,7 @@
 import React, { useRef, useState, ChangeEvent, DragEvent } from "react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-
+import { useFile } from "../../contexts/file-context";
 interface UploadedFile {
   name: string;
   size: number;
@@ -20,6 +20,7 @@ export function FileUpload({ onUpload, onSelectColumn }: FileUploadProps) {
   const [isUploaded, setIsUploaded] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setFileData } = useFile();
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -82,9 +83,11 @@ export function FileUpload({ onUpload, onSelectColumn }: FileUploadProps) {
         }
 
         const data = await response.json();
+        setFileData(data);
         setIsUploaded(true);
         if (onUpload) onUpload();
         resolve(data);
+        console.log(data);
       } catch (error) {
         console.error('Upload error:', error);
         setIsUploaded(false);
@@ -168,7 +171,7 @@ export function FileUpload({ onUpload, onSelectColumn }: FileUploadProps) {
       </div>
       <div className="flex gap-4 mt-6 w-full justify-center">
         <button
-          className={`rounded px-6 py-2 font-semibold shadow transition-colors ${
+          className={`rounded-[45px] px-8 py-2 font-semibold cursor-pointer shadow transition-colors ${
             isUploaded
               ? "bg-gray-300 text-gray-500 cursor-not-allowed"
               : uploadedFile
@@ -181,7 +184,7 @@ export function FileUpload({ onUpload, onSelectColumn }: FileUploadProps) {
           {isUploading ? "Uploading..." : isUploaded ? "Uploaded" : "Upload"}
         </button>
         <button
-          className={`rounded px-6 py-2 font-semibold shadow transition-colors ${
+          className={`rounded-[45px] px-6 py-2 font-semibold cursor-pointer shadow transition-colors ${
             isUploaded
               ? "bg-blue-600 text-white hover:bg-blue-700"
               : "bg-gray-200 text-gray-700 cursor-not-allowed"
