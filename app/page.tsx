@@ -18,10 +18,7 @@ export default function Home() {
     setStep(2);
   }
 
-  function handleColumnSelection(selectedColumns: string[]) {
-    // Handle the selected columns here
-    console.log('Selected columns:', selectedColumns);
-  }
+
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
@@ -34,7 +31,7 @@ export default function Home() {
         </div>
       )}
       {step === 2 && (
-        <SelectColumn onNext={handleColumnSelection} />
+        <SelectColumn />
       )}
     </div>
   );

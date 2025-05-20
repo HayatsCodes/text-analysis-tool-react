@@ -17,53 +17,38 @@ export default function PreprocessingPage() {
   const selectedColumns = columnsParam ? columnsParam.split(",") : [];
   const { setCurrentSection, setCurrentChild } = useSidebarState();
 
-  const [language, setLanguage] = useState(languages[0]);
+  const [language, setLanguage] = useState<"korean" | "english">("korean");
   const [column, setColumn] = useState("");
-  const [analyzer, setAnalyzer] = useState(analyzers[0]);
-  const [analyzerSetting, setAnalyzerSetting] = useState(analyzerSettings[0]);
+  const [analyzer, setAnalyzer] = useState("");
+  const [analyzerSetting, setAnalyzerSetting] = useState("adjective");
   const [wordLength, setWordLength] = useState("");
   const [fileName, setFileName] = useState("");
-  const [processed, setProcessed] = useState(false);
 
   useEffect(() => {
     setCurrentSection("preprocessing");
     setCurrentChild(null);
   }, [setCurrentSection, setCurrentChild]);
 
-  function handleProcess() {
-    setProcessed(true);
-  }
-
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      <PreprocessingForm
-        language={language}
-        setLanguage={setLanguage}
-        column={column}
-        setColumn={setColumn}
-        analyzer={analyzer}
-        setAnalyzer={setAnalyzer}
-        analyzerSetting={analyzerSetting}
-        setAnalyzerSetting={setAnalyzerSetting}
-        wordLength={wordLength}
-        setWordLength={setWordLength}
-        fileName={fileName}
-        setFileName={setFileName}
-        selectedColumns={selectedColumns}
-        languages={languages}
-        analyzers={analyzers}
-        analyzerSettings={analyzerSettings}
-        onProcess={handleProcess}
-      />
-      {processed && (
-        <div className="flex justify-center mt-8">
-          <Link href="/analysis">
-            <button className="bg-blue-600 text-white rounded-full px-8 py-2 font-semibold shadow hover:bg-blue-700 transition-colors">
-              Continue
-            </button>
-          </Link>
-        </div>
-      )}
+      <div className="w-full max-w-xl">
+        <PreprocessingForm
+          language={language}
+          setLanguage={setLanguage}
+          column={column}
+          setColumn={setColumn}
+          analyzer={analyzer}
+          setAnalyzer={setAnalyzer}
+          analyzerSetting={analyzerSetting}
+          setAnalyzerSetting={setAnalyzerSetting}
+          wordLength={wordLength}
+          setWordLength={setWordLength}
+          fileName={fileName}
+          setFileName={setFileName}
+          selectedColumns={selectedColumns}
+          onProcess={() => {}}
+        />
+      </div>
     </div>
   );
 } 

@@ -1,96 +1,299 @@
-import React from "react";
+"use client";
 
-export interface PreprocessingFormProps {
-  language: string;
-  setLanguage: (v: string) => void;
+import { useEffect, useCallback, memo, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { useFile } from "../../contexts/file-context";
+import { Loader2, Download } from "lucide-react";
+import toast from "react-hot-toast";
+import { fileService } from "../../services/file-service";
+
+const LANGUAGE_CONFIG = {
+  english: {
+    analyzers: {
+      spacy: "spaCy"
+    },
+    name: "영어 (English)"
+  },
+  korean: {
+    analyzers: {
+      hannanum: "한나눔 (Hannanum)",
+      kkma: "꼬꼬마 (Kkma)",
+      komoran: "코모란 (Komoran)",
+      okt: "Open Korean Text (Okt)"
+    },
+    name: "한국어 (Korean)"
+  }
+} as const;
+
+type LanguageKey = keyof typeof LANGUAGE_CONFIG;
+
+const ANALYZER_SETTINGS = [
+  { value: "adjective", label: "형용사 (Adjective)" },
+  { value: "pos_tag", label: "품사 태그 (POS Tag)" }
+] as const;
+
+const WORD_LENGTH_OPTIONS = Array.from({ length: 11 }, (_, i) => (i + 2).toString());
+
+const POS_TAGS_OPTIONS = {
+  korean: {
+    'Noun': '명사',
+    'Verb': '동사',
+    'Adjective': '형용사',
+    'Adverb': '부사',
+    // 'Determiner': '관형사',
+    // 'Exclamation': '감탄사',
+    // 'Josa': '조사',
+    // 'Eomi': '어미',
+    // 'Suffix': '접미사',
+    // 'Prefix': '접두사'
+  },
+  english: {
+    'Noun': '명사',
+    'JJ': '형용사',
+    'VB': '동사(원형)'
+  }
+} as const;
+
+interface PreprocessingFormProps {
+  language: LanguageKey;
+  setLanguage: (value: LanguageKey) => void;
   column: string;
-  setColumn: (v: string) => void;
+  setColumn: (value: string) => void;
   analyzer: string;
-  setAnalyzer: (v: string) => void;
+  setAnalyzer: (value: string) => void;
   analyzerSetting: string;
-  setAnalyzerSetting: (v: string) => void;
+  setAnalyzerSetting: (value: string) => void;
   wordLength: string;
-  setWordLength: (v: string) => void;
+  setWordLength: (value: string) => void;
   fileName: string;
-  setFileName: (v: string) => void;
+  setFileName: (value: string) => void;
   selectedColumns: string[];
-  languages: string[];
-  analyzers: string[];
-  analyzerSettings: string[];
   onProcess: () => void;
 }
 
-export function PreprocessingForm({
-  language, setLanguage, column, setColumn, analyzer, setAnalyzer, analyzerSetting, setAnalyzerSetting, wordLength, setWordLength, fileName, setFileName, selectedColumns, languages, analyzers, analyzerSettings, onProcess
-}: PreprocessingFormProps) {
+const FormField = memo(function FormField({ 
+  label, 
+  children 
+}: { 
+  label: string; 
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex flex-col items-center gap-8 mt-12 w-full max-w-3xl">
-      <div className="mb-8 text-xl font-semibold">Data Preprocessing</div>
-      {/* Language & Column */}
-      <div className="border rounded-lg p-8 w-full bg-white shadow-sm">
-        <div className="mb-4 font-medium text-lg">Select Language</div>
-        <select
-          className="border rounded-lg px-4 py-2 w-full mb-6 text-lg"
-          value={language}
-          onChange={e => setLanguage(e.target.value)}
-        >
-          {languages.map(l => <option key={l}>{l}</option>)}
-        </select>
-        <div className="mb-4 font-medium text-lg">Select Column</div>
-        <select
-          className="border rounded-lg px-4 py-2 w-full text-lg"
-          value={column}
-          onChange={e => setColumn(e.target.value)}
-        >
-          <option value="">Process</option>
-          {selectedColumns.map(col => <option key={col}>{col}</option>)}
-        </select>
-      </div>
-      {/* Analyzer */}
-      <div className="border rounded-lg p-8 w-full bg-white shadow-sm">
-        <div className="mb-4 font-medium text-lg">Morphological Analyzer</div>
-        <select
-          className="border rounded-lg px-4 py-2 w-full mb-6 text-lg"
-          value={analyzer}
-          onChange={e => setAnalyzer(e.target.value)}
-        >
-          {analyzers.map(a => <option key={a}>{a}</option>)}
-        </select>
-        <div className="mb-4 font-medium text-lg">Morphological Analyzer Settings</div>
-        <select
-          className="border rounded-lg px-4 py-2 w-full mb-6 text-lg"
-          value={analyzerSetting}
-          onChange={e => setAnalyzerSetting(e.target.value)}
-        >
-          {analyzerSettings.map(s => <option key={s}>{s}</option>)}
-        </select>
-        <div className="mb-4 font-medium text-lg">Word Length</div>
-        <input
-          className="border rounded-lg px-4 py-2 w-full text-lg"
-          value={wordLength}
-          onChange={e => setWordLength(e.target.value)}
-          placeholder="2, 3"
-        />
-      </div>
-      {/* File Name */}
-      <div className="border rounded-lg p-8 w-full bg-white shadow-sm">
-        <div className="mb-4 font-medium text-lg">Set file name</div>
-        <input
-          className="border rounded-lg px-4 py-2 w-full text-lg"
-          value={fileName}
-          onChange={e => setFileName(e.target.value)}
-          placeholder="Process File"
-        />
-      </div>
-      {/* Actions */}
-      <div className="flex gap-4 w-full justify-center">
-        <button
-          className="bg-blue-600 text-white rounded-full px-8 py-3 font-semibold shadow hover:bg-blue-700 transition-colors text-lg"
-          onClick={onProcess}
-        >
-          Process File
-        </button>
-      </div>
+    <div className="space-y-2 w-full">
+      <label className="text-sm font-medium">{label}</label>
+      {children}
     </div>
+  );
+});
+
+const selectStyles = {
+  trigger: "h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [&>svg]:text-blue-500 [&>svg]:stroke-[2.5] cursor-pointer",
+  content: "bg-white border-blue-200",
+  item: "text-gray-700 hover:bg-blue-50 hover:text-blue-600 data-[highlighted]:bg-blue-50 data-[highlighted]:text-blue-600 data-[state=checked]:bg-blue-100 data-[state=checked]:text-blue-600 cursor-pointer",
+  separator: "bg-blue-100",
+  label: "text-blue-600 font-medium",
+  group: "text-blue-600 font-medium"
+};
+
+export function PreprocessingForm({
+  language = "korean",
+  setLanguage,
+  column,
+  setColumn,
+  analyzer,
+  setAnalyzer,
+  analyzerSetting = Object.keys(POS_TAGS_OPTIONS.korean)[0],
+  setAnalyzerSetting,
+  wordLength,
+  setWordLength,
+  fileName,
+  setFileName,
+  selectedColumns,
+  onProcess,
+}: PreprocessingFormProps) {
+  const { fileData } = useFile();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessed, setIsProcessed] = useState(false);
+  const [processedFileUrl, setProcessedFileUrl] = useState<string | null>(null);
+
+  // Reset analyzer and analyzer setting when language changes
+  useEffect(() => {
+    const languageConfig = LANGUAGE_CONFIG[language];
+    const firstAnalyzer = Object.keys(languageConfig.analyzers)[0];
+    setAnalyzer(firstAnalyzer);
+    
+    const firstPosTag = Object.keys(POS_TAGS_OPTIONS[language])[0];
+    setAnalyzerSetting(firstPosTag);
+  }, [language, setAnalyzer, setAnalyzerSetting]);
+
+  // Set default filename from uploaded file
+  useEffect(() => {
+    if (fileData?.filename && !fileName) {
+      const baseName = fileData.filename.split('.')[0];
+      setFileName(`${baseName}`);
+    }
+  }, [fileData?.filename, fileName, setFileName]);
+
+  const currentLanguageConfig = LANGUAGE_CONFIG[language];
+  const currentPosTags = POS_TAGS_OPTIONS[language];
+
+  const handleProcess = async () => {
+    if (!column || !wordLength || !fileName) return;
+
+    const processPromise = new Promise(async (resolve, reject) => {
+      try {
+        const data = await fileService.process({
+          column_name: column,
+          language,
+          analyzer,
+          pos_tags: analyzerSetting,
+          min_word_length: wordLength,
+          custom_filename: fileName
+        });
+        console.log('Process response:', data);
+        setIsProcessed(true);
+        resolve(data);
+      } catch (error) {
+        console.error('Processing error:', error);
+        reject(error);
+      }
+    });
+
+    toast.promise(processPromise, {
+      loading: 'Processing file...',
+      success: 'File processed successfully!',
+      error: 'Failed to process file. Please try again.',
+    });
+  };
+
+  const handleDownload = () => {
+    if (processedFileUrl) {
+      const link = document.createElement('a');
+      link.href = processedFileUrl;
+      link.download = `${fileName}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
+  return (
+    <Card className="p-6">
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <FormField label="Language">
+            <Select value={language} onValueChange={(value: LanguageKey) => setLanguage(value)}>
+              <SelectTrigger className={selectStyles.trigger}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className={selectStyles.content}>
+                {Object.entries(LANGUAGE_CONFIG).map(([key, config]) => (
+                  <SelectItem key={key} value={key} className={selectStyles.item}>
+                    {config.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField label="Column">
+            <Select value={column} onValueChange={setColumn}>
+              <SelectTrigger className={selectStyles.trigger}>
+                <SelectValue placeholder="Select column | 열 선택" />
+              </SelectTrigger>
+              <SelectContent className={selectStyles.content}>
+                {selectedColumns.map((col) => (
+                  <SelectItem key={col} value={col} className={selectStyles.item}>
+                    {col}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField label="Morphological Analyzer">
+            <Select value={analyzer} onValueChange={setAnalyzer}>
+              <SelectTrigger className={selectStyles.trigger}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className={selectStyles.content}>
+                {Object.entries(currentLanguageConfig.analyzers).map(([key, name]) => (
+                  <SelectItem key={key} value={key} className={selectStyles.item}>
+                    {name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField label="Analyzer Setting">
+            <Select value={analyzerSetting} onValueChange={setAnalyzerSetting}>
+              <SelectTrigger className={selectStyles.trigger}>
+                <SelectValue placeholder="분석 설정 선택" />
+              </SelectTrigger>
+              <SelectContent className={selectStyles.content}>
+                {Object.entries(currentPosTags).map(([key, value]) => (
+                  <SelectItem key={key} value={key} className={selectStyles.item}>
+                    {value} ({key})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FormField>
+
+          <FormField label="Word Length">
+            <Input
+              type="number"
+              value={wordLength}
+              onChange={(e) => setWordLength(e.target.value)}
+              className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="단어 길이 입력 (2,3)"
+            />
+          </FormField>
+
+          <FormField label="File Name">
+            <Input
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
+              className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 bg-gray-50"
+              placeholder="Enter file name"
+              readOnly
+            />
+          </FormField>
+        </div>
+
+        <div className="flex justify-center gap-4 pt-4">
+          <Button
+            onClick={handleProcess}
+            disabled={!column || !wordLength || !fileName || isProcessing}
+            className="bg-blue-600 hover:bg-blue-700 rounded-[45px] px-8 py-2 text-sm min-w-[120px] disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : isProcessed ? (
+              'Processed'
+            ) : (
+              'Process'
+            )}
+          </Button>
+          
+          {isProcessed && processedFileUrl && (
+            <Button
+              onClick={handleDownload}
+              className="bg-green-600 hover:bg-green-700 rounded-[45px] px-8 py-2 text-sm min-w-[120px]"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download
+            </Button>
+          )}
+        </div>
+      </div>
+    </Card>
   );
 } 

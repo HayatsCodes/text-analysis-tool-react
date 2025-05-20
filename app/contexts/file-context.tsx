@@ -2,11 +2,10 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-interface FileData {
-  columns: string[];
+export interface FileData {
   filename: string;
-  session_id: string;
-  success: boolean;
+  columns: string[];
+  file: File;
 }
 
 interface FileContextType {
@@ -32,4 +31,4 @@ export function useFile() {
     throw new Error("useFile must be used within a FileProvider");
   }
   return context;
-} 
+}

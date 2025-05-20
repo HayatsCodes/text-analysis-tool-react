@@ -5,14 +5,13 @@ import { useFile } from "../../contexts/file-context";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-interface SelectColumnProps {
-  onNext: (selectedColumns: string[]) => void;
-}
 
-export function SelectColumn({ onNext }: SelectColumnProps) {
+export function SelectColumn() {
   const { fileData } = useFile();
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
+  const router = useRouter();
 
   if (!fileData?.columns) {
     return (
@@ -31,7 +30,7 @@ export function SelectColumn({ onNext }: SelectColumnProps) {
   }
 
   function handleNext() {
-    onNext(selectedColumns);
+    router.push(`/preprocessing?columns=${selectedColumns.join(',')}`);
   }
 
   return (
@@ -41,7 +40,8 @@ export function SelectColumn({ onNext }: SelectColumnProps) {
         {fileData.columns.map((column) => (
           <div
             key={column}
-            className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors"
+            onClick={() => handleColumnSelect(column)}
+            className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
           >
             <Checkbox
               id={column}
@@ -50,7 +50,7 @@ export function SelectColumn({ onNext }: SelectColumnProps) {
             />
             <label
               htmlFor={column}
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
             >
               {column}
             </label>

@@ -3,7 +3,9 @@
 import React, { useRef, useState, ChangeEvent, DragEvent } from "react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { useFile } from "../../contexts/file-context";
+import { useFile } from "@/app/contexts/file-context";
+import { fileService } from "@/app/services/file-service";
+
 interface UploadedFile {
   name: string;
   size: number;
@@ -70,24 +72,11 @@ export function FileUpload({ onUpload, onSelectColumn }: FileUploadProps) {
     setIsUploading(true);
     const uploadPromise = new Promise(async (resolve, reject) => {
       try {
-        const formData = new FormData();
-        formData.append('file', inputRef.current.files[0]);
-
-        const response = await fetch('https://analysis-app-ruud.onrender.com/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          throw new Error('Upload failed');
-        }
-
-        const data = await response.json();
+        const data = await fileService.upload(inputRef.current.files[0]);
         setFileData(data);
         setIsUploaded(true);
         if (onUpload) onUpload();
         resolve(data);
-        console.log(data);
       } catch (error) {
         console.error('Upload error:', error);
         setIsUploaded(false);

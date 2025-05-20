@@ -39,7 +39,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
                 User Data Upload
                 <span className="ml-auto">+</span>
                 {currentChild === "user_data_upload" && (
-                  <span className="absolute -left-4 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full border-2 border-blue-700 shadow-[0_0_8px_2px_rgba(255,255,255,0.7)] animate-twinkle" />
+                  <span className="absolute -left-2 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full border-2 border-blue-700 shadow-[0_0_8px_2px_rgba(255,255,255,0.7)] animate-twinkle" />
                 )}
               </div>
 
