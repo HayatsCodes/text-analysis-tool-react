@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useFile } from "../../contexts/file-context";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, Check, ArrowRight } from "lucide-react";
 import toast from "react-hot-toast";
 import { fileService } from "../../services/file-service";
+import { useRouter } from "next/navigation";
 
 const LANGUAGE_CONFIG = {
   english: {
@@ -115,6 +116,7 @@ export function PreprocessingForm({
   onProcess,
 }: PreprocessingFormProps) {
   const { fileData } = useFile();
+  const router = useRouter();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessed, setIsProcessed] = useState(false);
   const [processedFileUrl, setProcessedFileUrl] = useState<string | null>(null);
@@ -142,6 +144,7 @@ export function PreprocessingForm({
 
   const handleProcess = async () => {
     if (!column || !wordLength || !fileName) return;
+    setIsProcessing(true);
 
     const processPromise = new Promise(async (resolve, reject) => {
       try {
@@ -151,14 +154,19 @@ export function PreprocessingForm({
           analyzer,
           pos_tags: analyzerSetting,
           min_word_length: wordLength,
-          custom_filename: fileName
+          // custom_filename: fileName
         });
-        console.log('Process response:', data);
+        
+        if (data.download_url) {
+          setProcessedFileUrl(`https://analysis-app-ruud.onrender.com${data.download_url}`);
+        }
         setIsProcessed(true);
         resolve(data);
       } catch (error) {
         console.error('Processing error:', error);
         reject(error);
+      } finally {
+        setIsProcessing(false);
       }
     });
 
@@ -173,11 +181,15 @@ export function PreprocessingForm({
     if (processedFileUrl) {
       const link = document.createElement('a');
       link.href = processedFileUrl;
-      link.download = `${fileName}.csv`;
+      link.download = `${fileName}`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
+  };
+
+  const handleProceedToAnalysis = () => {
+    router.push('/analysis');
   };
 
   return (
@@ -268,8 +280,12 @@ export function PreprocessingForm({
         <div className="flex justify-center gap-4 pt-4">
           <Button
             onClick={handleProcess}
-            disabled={!column || !wordLength || !fileName || isProcessing}
-            className="bg-blue-600 hover:bg-blue-700 rounded-[45px] px-8 py-2 text-sm min-w-[120px] disabled:cursor-not-allowed cursor-pointer"
+            disabled={!column || !wordLength || !fileName || isProcessing || isProcessed}
+            className={`rounded-[45px] px-8 py-2 text-sm min-w-[120px] ${
+              isProcessed 
+                ? 'bg-transparent text-green-600 border border-green-600 hover:bg-green-50'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            } disabled:cursor-not-allowed cursor-pointer`}
           >
             {isProcessing ? (
               <>
@@ -277,7 +293,10 @@ export function PreprocessingForm({
                 Processing...
               </>
             ) : isProcessed ? (
-              'Processed'
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Processed
+              </>
             ) : (
               'Process'
             )}
@@ -286,13 +305,25 @@ export function PreprocessingForm({
           {isProcessed && processedFileUrl && (
             <Button
               onClick={handleDownload}
-              className="bg-green-600 hover:bg-green-700 rounded-[45px] px-8 py-2 text-sm min-w-[120px]"
+              className="bg-green-600 hover:bg-green-700 text-white rounded-[45px] px-8 py-2 text-sm min-w-[120px] "
             >
               <Download className="mr-2 h-4 w-4" />
               Download
             </Button>
           )}
         </div>
+
+        {isProcessed && (
+          <div className="flex justify-center mt-6">
+            <Button
+              onClick={handleProceedToAnalysis}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-[45px] px-8 py-2 text-sm min-w-[180px]"
+            >
+              Proceed
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -11,12 +11,12 @@ export const fileService = {
   },
 
   process: async (data: {
-    column_name: string;
+    column_name: string;  
     language: string;
     analyzer: string;
     pos_tags: string;
     min_word_length: string;
-    custom_filename: string;
+    // custom_filename: string;
   }) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
