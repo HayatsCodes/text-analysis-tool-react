@@ -5,30 +5,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useFile } from "../../contexts/file-context";
+import { fileService } from "../../services/file-service";
+import toast from "react-hot-toast";
 
 interface WordFrequencyFormProps {
-  onAnalyzed: () => void;
+  onAnalyzed: (analysisResult: any) => void; // Can be more specific with analysis result type
 }
 
-const WORD_CLOUD_FORMATS = [
-  { value: "oblong", label: "Oblong" },
-  { value: "square", label: "Square" },
+type CloudShapeType = "rectangle" | "circle" | "triangle" | "diamond";
+type SelectionMethodType = "top_n" | "manual";
+type BackendCloudColorType = 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'teal';
+
+const WORD_CLOUD_FORMATS: { value: CloudShapeType, label: string }[] = [
+  { value: "rectangle", label: "Rectangle" },
+  { value: "circle", label: "Circle" },
+  { value: "triangle", label: "Triangle" },
+  { value: "diamond", label: "Diamond" },
 ];
 
-const WORD_SELECTION_METHODS = [
+const WORD_SELECTION_METHODS: { value: SelectionMethodType, label: string }[] = [
   { value: "top_n", label: "Automatically Select Top N words" },
   { value: "manual", label: "Manual Selection" },
 ];
 
-const WORD_CLOUD_COLORS = [
-  { value: "blue-purple", label: "Blue-Purple" },
-  { value: "red-yellow", label: "Red-Yellow" },
-  { value: "green-orange", label: "Green-Orange" },
-];
-
-const EDIT_WORD_OPTIONS = [
-  { value: "edit", label: "Edit or delete keywords" },
-  { value: "none", label: "None" },
+const WORD_CLOUD_COLORS: { value: BackendCloudColorType, label: string }[] = [
+  { value: "blue", label: "Blue Theme" }, // Example: "blue-green" maps to "blue"
+  { value: "green", label: "Green Theme" },
+  { value: "red", label: "Red Theme" },
+  { value: "purple", label: "Purple Theme" },
+  { value: "orange", label: "Orange Theme" },
+  { value: "teal", label: "Teal Theme" },
 ];
 
 const FormField = memo(function FormField({ 
@@ -55,19 +61,40 @@ const selectStyles = {
 export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
   const { fileData } = useFile();
   const [column, setColumn] = useState("");
-  const [format, setFormat] = useState("oblong");
-  const [selectionMethod, setSelectionMethod] = useState("top_n");
-  const [colors, setColors] = useState("blue-purple");
+  const [format, setFormat] = useState<CloudShapeType>("rectangle");
+  const [selectionMethod, setSelectionMethod] = useState<SelectionMethodType>("top_n");
+  const [colors, setColors] = useState<BackendCloudColorType>("blue"); // Default to a valid theme
   const [maxWords, setMaxWords] = useState("50");
-  const [editWord, setEditWord] = useState("edit");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  function handleAnalyze() {
+  async function handleAnalyze() {
+    if (!column) {
+      toast.error("Please select a text column.");
+      return;
+    }
     setIsAnalyzing(true);
-    setTimeout(() => {
+
+    const analysisPromise = fileService.analyzeWordFrequency({
+      column_name: column,
+      selection_type: selectionMethod,
+      max_words: parseInt(maxWords, 10),
+      cloud_shape: format,
+      cloud_color: colors,
+    });
+
+    toast.promise(analysisPromise, {
+      loading: 'Analyzing word frequency...',
+      success: (data) => {
+        onAnalyzed(data); // Pass analysis result to parent
+        return 'Analysis successful!';
+      },
+      error: (err) => {
+        console.error("Analysis error:", err);
+        return err.message || 'Analysis failed. Please try again.';
+      },
+    }).finally(() => {
       setIsAnalyzing(false);
-      onAnalyzed();
-    }, 1800); // Mock API delay
+    });
   }
 
   return (
@@ -89,9 +116,9 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
 
           <div className="space-y-4">
             <FormField label="Word Cloud Format">
-              <Select value={format} onValueChange={setFormat}>
+              <Select value={format} onValueChange={(value) => setFormat(value as CloudShapeType)}>
                 <SelectTrigger className={selectStyles.trigger}>
-                  <SelectValue placeholder="Oblong" />
+                  <SelectValue placeholder="Rectangle" />
                 </SelectTrigger>
                 <SelectContent className={selectStyles.content}>
                   {WORD_CLOUD_FORMATS.map(opt => (
@@ -102,7 +129,7 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
             </FormField>
 
             <FormField label="Word Selection Method">
-              <Select value={selectionMethod} onValueChange={setSelectionMethod}>
+              <Select value={selectionMethod} onValueChange={(value) => setSelectionMethod(value as SelectionMethodType)}>
                 <SelectTrigger className={selectStyles.trigger}>
                   <SelectValue placeholder="Automatically Select Top N words" />
                 </SelectTrigger>
@@ -115,9 +142,9 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
             </FormField>
 
             <FormField label="Word Cloud Colors">
-              <Select value={colors} onValueChange={setColors}>
+              <Select value={colors} onValueChange={(value) => setColors(value as BackendCloudColorType)}>
                 <SelectTrigger className={selectStyles.trigger}>
-                  <SelectValue placeholder="Blue-Purple" />
+                  <SelectValue placeholder="Blue Theme" />
                 </SelectTrigger>
                 <SelectContent className={selectStyles.content}>
                   {WORD_CLOUD_COLORS.map(opt => (
@@ -139,19 +166,6 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
               />
             </FormField>
           </div>
-
-          <FormField label="Edit Word">
-            <Select value={editWord} onValueChange={setEditWord}>
-              <SelectTrigger className={selectStyles.trigger}>
-                <SelectValue placeholder="Edit or delete keywords" />
-              </SelectTrigger>
-              <SelectContent className={selectStyles.content}>
-                {EDIT_WORD_OPTIONS.map(opt => (
-                  <SelectItem key={opt.value} value={opt.value} className={selectStyles.item}>{opt.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </FormField>
 
           <div className="flex justify-center pt-4">
             <Button

@@ -13,9 +13,9 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="w-64 bg-blue-700 text-white flex flex-col p-4">
+      <aside className="w-64 bg-blue-700 text-white flex flex-col p-4 pt-10">
         {/* Menu Button */}
-        <button className="flex items-center gap-2 font-bold bg-white/100 text-blue-700 rounded-lg px-3 py-2 mb-6 hover:bg-white/90 transition-colors text-sm">
+        <button className="flex items-center gap-2 font-bold bg-white/100 text-blue-700 rounded-lg px-3 py-2 mb-20 hover:bg-white/90 transition-colors text-sm">
           <Image src="/menu_icon.png" alt="Menu" width={16} height={16} />
           Menu
         </button>

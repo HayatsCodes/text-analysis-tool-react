@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export interface LDAKeywordEditorProps {
   onNext: () => void;
@@ -14,14 +16,14 @@ export function LDAKeywordEditor({ onNext }: LDAKeywordEditorProps) {
           <div className="font-medium text-sm mb-2">Optimal Number of Topics</div>
           <div className="flex items-center gap-2">
             <input type="number" value={8} className="border rounded px-2 py-1 w-20" readOnly />
-            <button className="bg-blue-600 text-white rounded px-4 py-1 flex items-center gap-1 text-sm font-medium">
+            <Button variant="default" size="sm" className="flex items-center gap-1">
               Edit
               <span className="material-icons text-base">edit</span>
-            </button>
-            <button className="bg-blue-50 text-blue-700 border border-blue-600 rounded px-4 py-1 flex items-center gap-1 text-sm font-medium">
+            </Button>
+            <Button variant="outline" size="sm" className="flex items-center gap-1 text-blue-700 border-blue-600">
               Apply
               <span className="material-icons text-base">refresh</span>
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -37,10 +39,10 @@ export function LDAKeywordEditor({ onNext }: LDAKeywordEditorProps) {
                 <option>Topic 2</option>
               </select>
             </div>
-            <button className="bg-blue-50 text-blue-700 border border-blue-600 rounded px-4 py-1 flex items-center gap-1 text-sm font-medium mt-5">
+            <Button variant="outline" size="sm" className="flex items-center gap-1 text-blue-700 border-blue-600 mt-5">
               Apply
               <span className="material-icons text-base">refresh</span>
-            </button>
+            </Button>
             <span className="ml-auto bg-gray-200 text-xs rounded-full px-3 py-1 font-medium">06 keywords</span>
           </div>
           <div className="overflow-x-auto">
@@ -60,13 +62,13 @@ export function LDAKeywordEditor({ onNext }: LDAKeywordEditorProps) {
                     <td className="p-2">Korean printing culture association</td>
                     <td className="p-2">0.0030</td>
                     <td className="p-2 flex gap-2">
-                      <button className="bg-blue-600 text-white rounded px-3 py-1 flex items-center gap-1 text-xs font-medium">
+                      <Button variant="default" size="sm" className="flex items-center gap-1 text-xs">
                         Edit
                         <span className="material-icons text-base">edit</span>
-                      </button>
-                      <button className="bg-blue-50 text-blue-700 border border-blue-600 rounded px-2 py-1 flex items-center gap-1 text-xs font-medium">
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex items-center gap-1 text-xs text-blue-700 border-blue-600">
                         <span className="material-icons text-base">delete</span>
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -75,12 +77,13 @@ export function LDAKeywordEditor({ onNext }: LDAKeywordEditorProps) {
           </div>
         </div>
       </div>
-      <button
-        className="bg-blue-600 text-white rounded-full px-8 py-2 font-semibold shadow hover:bg-blue-700 transition-colors"
+      <Button
         onClick={onNext}
+        className="bg-blue-600 text-white rounded-full px-8 py-2 font-semibold shadow hover:bg-blue-700 transition-colors min-w-[180px]"
       >
-        Next
-      </button>
+        Proceed to Visualization
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Button>
     </div>
   );
 } 
