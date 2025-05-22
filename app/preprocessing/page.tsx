@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PreprocessingForm } from "../components/preprocessing-form/preprocessing-form";
 import Link from "next/link";
 import { useSidebarState } from "../components/sidebar-layout/sidebar-state-context";
+import { Loader2 } from "lucide-react";
 
 const languages = ["Korean", "English"];
 const analyzers = ["Hannanum", "Komoran"];
 const analyzerSettings = ["Adjective", "Noun"];
 
-export default function PreprocessingPage() {
+function PreprocessingPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const columnsParam = searchParams.get("columns");
@@ -50,5 +51,13 @@ export default function PreprocessingPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function PreprocessingPage() {
+  return (
+    <Suspense fallback={<div className="w-full h-full flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-blue-500" /></div>}>
+      <PreprocessingPageContent />
+    </Suspense>
   );
 } 
