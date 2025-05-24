@@ -23,10 +23,27 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { LDAResponse } from "../../types/lda";
 
 type LdaTabValue = 'model' | 'topic' | 'chart' | 'network' | 'cloud' | 'interactive';
 
-export function LDATabs() {
+interface LDATabsProps {
+  ldaResponse: LDAResponse | null;
+}
+
+export function LDATabs({ ldaResponse }: LDATabsProps) {
+  if (!ldaResponse) {
+  return (
+      <div className="w-full max-w-5xl mt-6 pb-6 flex items-center justify-center">
+        <Card className="shadow-md p-8">
+          <p className="text-lg text-gray-600">Loading LDA results or no data available...</p>
+        </Card>
+      </div>
+    );
+  }
+
+  const { coherence_plot, perplexity_plot } = ldaResponse;
+
   return (
     <Tabs defaultValue="model" className="w-full max-w-5xl mt-6 pb-6">
       <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-4 h-auto">
@@ -56,17 +73,25 @@ export function LDATabs() {
             <CardTitle className="text-lg font-semibold">Model Performance Scores</CardTitle>
             <CardDescription className="text-sm">Perplexity and Coherence scores for the generated LDA model.</CardDescription>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-4">
-            <div className="border rounded-lg p-4 bg-white">
+          <CardContent className="grid grid-cols-1 gap-4">
+            <div className="border-2 border-blue-500 rounded-lg p-4 bg-white">
               <h3 className="text-base font-medium text-gray-700 mb-2">Perplexity Score</h3>
-              <div className="border rounded-lg h-52 bg-slate-50 flex items-center justify-center text-gray-400 text-xs">
-                Perplexity Chart Area
-              </div>
+              <div className="border w-full border-black rounded-lg h-96 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                {perplexity_plot ? (
+                  <img src={`data:image/png;base64,${perplexity_plot}`} alt="Perplexity Plot" className="w-full max-h-full object-fit object-center" />
+                ) : (
+                  <p>Perplexity Plot not available.</p>
+                )}
             </div>
-            <div className="border rounded-lg p-4 bg-white">
+            </div>
+            <div className="border-2 border-blue-500 rounded-lg p-4 bg-white">
               <h3 className="text-base font-medium text-gray-700 mb-2">Coherence Score</h3>
-              <div className="border rounded-lg h-52 bg-slate-50 flex items-center justify-center text-gray-400 text-xs">
-                Coherence Chart Area
+              <div className="border border-black rounded-lg h-96 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                {coherence_plot ? (
+                  <img src={`data:image/png;base64,${coherence_plot}`} alt="Coherence Plot" className="w-full max-h-full object-fit object-center" />
+                ) : (
+                  <p>Coherence Plot not available.</p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -84,7 +109,7 @@ export function LDATabs() {
               <div key={topicIndex} className="border rounded-lg p-4 bg-white">
                 <div className="flex flex-row items-center justify-between mb-2">
                   <h3 className="text-base font-medium text-gray-700">Topic {String(topicIndex).padStart(2, '0')}</h3>
-                  <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" className="text-blue-600 border-blue-500 hover:bg-blue-50 hover:text-blue-700 h-8">
                       <Edit3 className="mr-1.5 h-3.5 w-3.5" />
                       Edit Keywords
@@ -92,8 +117,8 @@ export function LDATabs() {
                     <span className="bg-blue-100 text-blue-700 text-xs rounded-full px-2.5 py-1 font-semibold">
                       40 keywords
                     </span>
-                  </div>
-                </div>
+            </div>
+          </div>
                 <div className="border rounded-md w-full min-h-[6rem] bg-slate-50 p-2 text-gray-500 text-xs">
                   Keywords for Topic {String(topicIndex).padStart(2, '0')} will be displayed here...
                 </div>
@@ -137,8 +162,8 @@ export function LDATabs() {
                   </div>
                   <div className="border rounded-lg h-48 bg-slate-50 flex items-center justify-center text-gray-400 text-xs">
                     Chart for Topic {topicIndex}
-                  </div>
-                </div>
+          </div>
+        </div>
               ))}
             </div>
           </CardContent>
@@ -169,7 +194,7 @@ export function LDATabs() {
             </div>
             <div className="border rounded-lg h-80 bg-white flex items-center justify-center text-gray-400 text-xs">
               Network Visualization Area
-            </div>
+          </div>
           </CardContent>
         </Card>
       </TabsContent>
@@ -186,7 +211,7 @@ export function LDATabs() {
                 <h3 className="text-sm font-medium text-gray-700 mb-1.5 px-1">Topic {topicIndex}</h3>
                 <div className="border rounded-lg aspect-[4/3] bg-slate-50 flex items-center justify-center text-gray-400 text-xs">
                   Cloud for Topic {topicIndex}
-                </div>
+        </div>
               </div>
             ))}
           </CardContent>
@@ -211,16 +236,16 @@ export function LDATabs() {
               </Button>
               <Button variant="outline" size="sm" className="h-9 text-gray-600 hover:bg-gray-100 text-xs px-3">
                 <XCircle className="mr-1 h-4 w-4" />
-                Clear
+              Clear
               </Button>
               <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white h-9 text-xs px-4 ml-auto">
                 <RefreshCw className="mr-1.5 h-4 w-4" />
-                Apply
+              Apply
               </Button>
-            </div>
+          </div>
             <div className="border rounded-lg min-h-[20rem] h-80 bg-white flex items-center justify-center text-gray-400 text-xs">
               Interactive Visualization Area
-            </div>
+          </div>
           </CardContent>
         </Card>
       </TabsContent>

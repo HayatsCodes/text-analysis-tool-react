@@ -138,7 +138,7 @@ export function LDAKeywordEditor({ ldaResponse, onNext }: LDAKeywordEditorProps)
               >
                 <FilePenLine className="mr-1.5 h-4 w-4" />
                 Edit
-              </Button>
+            </Button>
             )}
           </div>
         </div>
@@ -201,10 +201,10 @@ export function LDAKeywordEditor({ ldaResponse, onNext }: LDAKeywordEditorProps)
                       <div className="flex gap-2 justify-center">
                         <Button variant="outline" size="icon" className="h-7 w-7 text-blue-600 border-blue-500 hover:bg-blue-50">
                           <Edit3 className="h-4 w-4" />
-                        </Button>
+                      </Button>
                         <Button variant="outline" size="icon" className="h-7 w-7 text-red-600 border-red-500 hover:bg-red-50">
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                      </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -215,13 +215,13 @@ export function LDAKeywordEditor({ ldaResponse, onNext }: LDAKeywordEditorProps)
         </div>
       </CardContent>
       <CardFooter className="flex justify-end pt-6">
-        <Button
-          onClick={onNext}
+      <Button
+        onClick={onNext}
           className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-6 py-2 text-base font-medium shadow-md transition-colors min-w-[200px]"
-        >
-          Proceed to Visualization
+      >
+        Proceed to Visualization
           <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
+      </Button>
       </CardFooter>
     </Card>
   );
