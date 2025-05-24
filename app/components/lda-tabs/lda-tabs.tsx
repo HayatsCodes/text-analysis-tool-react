@@ -300,30 +300,12 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
 
       <TabsContent value="interactive">
         <Card className="shadow-md">
-           <CardHeader className="pb-4">
+           <CardHeader className="">
             <CardTitle className="text-lg font-semibold">Interactive pyLDAvis View</CardTitle>
-            <CardDescription className="text-sm">Explore topics and keywords with an interactive visualization (e.g., pyLDAvis).</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap items-center gap-2 mb-4 pb-3 border-b border-gray-200">
-              <span className="text-sm font-medium text-gray-700 mr-1 whitespace-nowrap">Selected Topic:</span>
-              <Input type="number" defaultValue="3" className="w-16 h-9 text-center focus-visible:ring-blue-500 text-sm" readOnly />
-              <Button variant="outline" size="icon" className="h-9 w-9 text-gray-600 hover:bg-gray-100">
-                <ChevronLeft className="h-4.5 w-4.5" />
-              </Button>
-              <Button variant="outline" size="icon" className="h-9 w-9 text-gray-600 hover:bg-gray-100">
-                <ChevronRight className="h-4.5 w-4.5" />
-              </Button>
-              <Button variant="outline" size="sm" className="h-9 text-gray-600 hover:bg-gray-100 text-xs px-3">
-                <XCircle className="mr-1 h-4 w-4" />
-              Clear
-              </Button>
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white h-9 text-xs px-4 ml-auto">
-                <RefreshCw className="mr-1.5 h-4 w-4" />
-                Apply
-              </Button>
-          </div>
-            <div className="border rounded-lg min-h-[20rem] h-96 bg-white flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+        
+            <div className="border rounded-lg min-h-[25rem] h-96 bg-white flex items-center justify-center text-gray-400 text-xs overflow-hidden">
               {pyldavis_html ? (
                 <iframe
                   srcDoc={pyldavis_html}
