@@ -29,7 +29,6 @@ import { LDAResponse, LDATopic, LDAKeyword } from "../../types/lda"; // Import n
 
 export interface LDAKeywordEditorProps {
   ldaResponse: LDAResponse;
-  onNext: () => void;
 }
 
 // Helper function to parse the keyword string from the backend
@@ -48,7 +47,7 @@ function parseKeywordsString(topicId: number, wordsString: string): LDAKeyword[]
   }).filter(kw => kw.text && !isNaN(kw.weight)); // Ensure keyword text exists and weight is a number
 }
 
-export function LDAKeywordEditor({ ldaResponse, onNext }: LDAKeywordEditorProps) {
+export function LDAKeywordEditor({ ldaResponse }: LDAKeywordEditorProps) {
   // Parse optimal_topic_num and topics from ldaResponse
   const initialOptimalTopics = ldaResponse.optimal_topic_num || 8; // Fallback if not present
   const parsedAndSortedTopics: LDATopic[] = ldaResponse.topics
@@ -72,25 +71,19 @@ export function LDAKeywordEditor({ ldaResponse, onNext }: LDAKeywordEditorProps)
   // Handle case where there might be no topics
   if (!parsedAndSortedTopics || parsedAndSortedTopics.length === 0) {
     return (
-      <Card className="w-full max-w-4xl mt-6 shadow-lg">
+      <Card className="w-full max-w-5xl mt-6 shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold">LDA Topic & Keyword Editor</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-center text-gray-600 py-8">No topic data available to display.</p>
         </CardContent>
-        <CardFooter className="flex justify-end pt-6">
-          <Button onClick={onNext} variant="outline">
-            Proceed (No Data)
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-        </CardFooter>
       </Card>
     );
   }
 
   return (
-    <Card className="w-full max-w-4xl mt-6 shadow-lg">
+    <Card className="w-full max-w-5xl mt-6 shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-semibold">LDA Topic & Keyword Editor</CardTitle>
         <CardDescription>
@@ -214,15 +207,6 @@ export function LDAKeywordEditor({ ldaResponse, onNext }: LDAKeywordEditorProps)
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-end pt-6">
-      <Button
-        onClick={onNext}
-          className="bg-blue-600 hover:bg-blue-700 text-white rounded-md px-6 py-2 text-base font-medium shadow-md transition-colors min-w-[200px]"
-      >
-        Proceed to Visualization
-          <ArrowRight className="ml-2 h-5 w-5" />
-      </Button>
-      </CardFooter>
     </Card>
   );
 } 

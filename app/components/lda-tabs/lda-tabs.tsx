@@ -80,7 +80,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
 
   return (
     <Tabs defaultValue="model" className="w-full max-w-5xl mt-6 pb-6">
-      <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-4 h-auto">
+      <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-4 gap-2 border border-black h-auto">
         <TabsTrigger value="model" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" /> Model Score
         </TabsTrigger>

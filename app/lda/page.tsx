@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import { LDAForm } from "../components/lda-form/lda-form";
-import { LDAKeywordEditor } from "../components/lda-keyword-editor/lda-keyword-editor";
-import { LDATabs } from "../components/lda-tabs/lda-tabs";
+import { LDAAnalysisViewTabs } from "../components/lda-analysis-view/lda-analysis-view";
 import { useSidebarState } from "../components/sidebar-layout/sidebar-state-context";
 import { LDAResponse } from "../types/lda";
-
-type Step = 1 | 2 | 3;
+import { Button } from "@/components/ui/button";
 
 export default function LDAPage() {
-  const [step, setStep] = useState<Step>(1);
+  const [showForm, setShowForm] = useState(true);
   const [ldaData, setLdaData] = useState<LDAResponse | null>(null);
   const { setCurrentSection, setCurrentChild } = useSidebarState();
 
@@ -21,14 +19,25 @@ export default function LDAPage() {
 
   function handleLdaProcessed(data: LDAResponse) {
     setLdaData(data);
-    setStep(2);
+    setShowForm(false);
+  }
+  
+  function handleReset() {
+    setLdaData(null);
+    setShowForm(true);
   }
 
   return (
-    <div className="w-full flex flex-col items-center py-8">
-      {step === 1 && <LDAForm onProcessed={handleLdaProcessed} />}
-      {step === 2 && ldaData && <LDAKeywordEditor ldaResponse={ldaData} onNext={() => setStep(3)} />}
-      {step === 3 && <LDATabs ldaResponse={ldaData} />}
+    <div className="w-full flex flex-col items-center pb-8 px-4 sm:px-6 lg:px-8">
+      {showForm && <LDAForm onProcessed={handleLdaProcessed} />}
+      {!showForm && ldaData && (
+        <div className="w-full max-w-5xl flex flex-col items-start">
+          {/* <Button onClick={handleReset} variant="outline" className="mb-4">
+            New Analysis (Back to Form)
+          </Button> */}
+          <LDAAnalysisViewTabs ldaResponse={ldaData} />
+        </div>
+      )}
     </div>
   );
 } 
