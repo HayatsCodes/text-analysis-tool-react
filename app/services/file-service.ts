@@ -8,6 +8,15 @@ interface ProcessWordFrequencyParams {
   cloud_color?: 'blue' | 'green' | 'red' | 'purple' | 'orange' | 'teal';
 }
 
+export interface ProcessLDAParams {
+  visualizationStyle: string;
+  column: string;
+  minTopics: string;
+  maxTopics: string;
+  minDocFreq: string;
+  maxDocFreq: string;
+}
+
 export const fileService = {
   upload: async (file: File) => {
     const formData = new FormData();
@@ -47,11 +56,25 @@ export const fileService = {
     
     // Add required parameters
     formData.append('column_name', column_name);
-    formData.append('selection_type', selection_type);
-    formData.append('max_words', max_words.toString());
-    formData.append('cloud_shape', cloud_shape);
-    formData.append('cloud_color', cloud_color);
+    // formData.append('selection_type', selection_type);
+    // formData.append('max_words', max_words.toString());
+    // formData.append('cloud_shape', cloud_shape);
+    // formData.append('cloud_color', cloud_color);
 
     return api.post('/analyse/analyze', formData);
+  },
+
+  processLDA: async (params: ProcessLDAParams) => {
+    const payload = {
+      chart_style: 'default',
+      network_style: params.visualizationStyle,
+      max_topic: parseInt(params.maxTopics, 10),
+      min_topic: parseInt(params.minTopics, 10),
+      no_above: parseFloat(params.maxDocFreq),
+      no_below: parseInt(params.minDocFreq, 10),
+      text_column: params.column,
+    };
+
+    return api.post('/analyse/process', payload); // Send payload as JSON
   }
 }; 

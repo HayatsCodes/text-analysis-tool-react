@@ -5,9 +5,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useFile } from "../../contexts/file-context";
+import { fileService } from "../../services/file-service";
+import toast from "react-hot-toast";
+import { LDAResponse } from "../../types/lda";
 
 interface LDAFormProps {
-  onProcessed: () => void;
+  onProcessed: (data: LDAResponse) => void;
 }
 
 const VISUALIZATION_STYLES = [
@@ -39,19 +42,44 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
   const { fileData } = useFile();
   const [column, setColumn] = useState("");
   const [visualizationStyle, setVisualizationStyle] = useState("academic");
-  const [minTopics, setMinTopics] = useState("20");
+  const [minTopics, setMinTopics] = useState("5");
   const [maxTopics, setMaxTopics] = useState("50");
-  const [minDocFreq, setMinDocFreq] = useState("10");
-  const [maxDocFreq, setMaxDocFreq] = useState("48");
+  const [minDocFreq, setMinDocFreq] = useState("0.2");
+  const [maxDocFreq, setMaxDocFreq] = useState("5");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  function handleProcess() {
+  async function handleProcess() {
+    if (!column) {
+      toast.error("Please select a text column for LDA processing.");
+      return;
+    }
     setIsProcessing(true);
-    // Simulate API call
-    setTimeout(() => {
+
+    const ldaPromise = fileService.processLDA({
+      visualizationStyle,
+      column,
+      minTopics,
+      maxTopics,
+      minDocFreq,
+      maxDocFreq,
+    });
+
+    toast.promise(ldaPromise, {
+      loading: 'Processing LDA analysis...',
+      success: (data) => {
+        onProcessed(data as LDAResponse);
+        return 'LDA analysis successful!';
+      },
+      error: (err) => {
+        console.error("Error processing LDA:", err);
+        const errorMessage = err && typeof err === 'object' && 'message' in err ? 
+                             String(err.message) : 
+                             'LDA analysis failed. Please try again.';
+        return errorMessage;
+      },
+    }).finally(() => {
       setIsProcessing(false);
-      onProcessed();
-    }, 2000);
+    });
   }
 
   return (
@@ -97,7 +125,7 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
                 value={minTopics}
                 onChange={e => setMinTopics(e.target.value)}
                 className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="20"
+                placeholder="5"
                 min={1}
               />
             </FormField>
@@ -121,7 +149,7 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
                 value={minDocFreq}
                 onChange={e => setMinDocFreq(e.target.value)}
                 className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="10"
+                placeholder="0.2"
                 min={1}
               />
             </FormField>
@@ -132,7 +160,7 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
                 value={maxDocFreq}
                 onChange={e => setMaxDocFreq(e.target.value)}
                 className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="48"
+                placeholder="5"
                 min={1}
               />
             </FormField>

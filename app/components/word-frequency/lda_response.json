@@ -1,0 +1,286 @@
+{
+  "optimal_topic_num": 38,
+  "coherence_plot": "bs4 encoding",
+  "perplexity_plot": "bs4 encoding",
+  "topics": [
+    {
+      "id": 24,
+      "words": "0.033*\"\uc911\uc2ec\uc73c\ub85c\" + 0.031*\"\uc5f0\uad6c\" + 0.025*\"\uad00\ud55c\" + 0.016*\"\ubc0f\" + 0.016*\"\ub3c4\uc11c\uc9c0\uc5ed\" + 0.014*\"\ud2b9\uc131\" + 0.012*\"\uc9c0\ubc29\uc790\uce58\ub2e8\uccb4\" + 0.012*\"\uc12c\" + 0.012*\"\uc6b0\ub3c4\" + 0.012*\"\uc0ac\ub840\ub97c\" + 0.012*\"\ub300\ud55c\" + 0.009*\"\ube0c\ub79c\ub4dc\" + 0.009*\"\ud1b5\ud55c\" + 0.009*\"\uad00\ub9ac\" + 0.009*\"\uac1c\ubc1c\uc5d0\""
+    },
+    {
+      "id": 28,
+      "words": "0.032*\"\uc5f0\uad6c\" + 0.030*\"\uc601\ud5a5\" + 0.026*\"\uad00\uad11\" + 0.021*\"\ubbf8\uce58\ub294\" + 0.018*\"\uad00\ud55c\" + 0.017*\"\uc911\uc2ec\uc73c\ub85c\" + 0.012*\"\uc12c\" + 0.009*\"\ub3c4\uc11c\uc9c0\uc5ed\" + 0.009*\"\ub9cc\uc871\ub3c4\" + 0.007*\"\ubc29\uc548\uc5d0\" + 0.006*\"\ud65c\uc131\ud654\" + 0.006*\"\ud1b5\ud55c\" + 0.006*\"\ubbf8\uc220\uad00\" + 0.006*\"\ucc38\uc5ec\uc790\uc758\" + 0.006*\"\uc778\uc2dd\uc758\""
+    },
+    {
+      "id": 1,
+      "words": "0.040*\"\uc911\uc2ec\uc73c\ub85c\" + 0.033*\"\uc5f0\uad6c\" + 0.022*\"\ubbf8\uce58\ub294\" + 0.015*\"\uc12c\" + 0.015*\"\ub300\ud55c\" + 0.015*\"\uc704\ud55c\" + 0.011*\"\uc601\ud5a5\" + 0.011*\"\uad00\ud55c\" + 0.011*\"\uc601\ud5a5\uc744\" + 0.007*\"\uad00\uad11\" + 0.007*\"\uc9c0\uc5ed\" + 0.007*\"\ud65c\uc131\ud654\ub97c\" + 0.007*\"\uc5b4\ucd0c\ub9c8\uc744\uc758\" + 0.007*\"\uc601\ub355\uad70\" + 0.007*\"\ubc1c\uc804\ubaa8\ub378\""
+    },
+    {
+      "id": 35,
+      "words": "0.054*\"\uc5f0\uad6c\" + 0.028*\"\uc911\uc2ec\uc73c\ub85c\" + 0.027*\"\uad00\ud55c\" + 0.024*\"\ubc29\uc548\uc5d0\" + 0.020*\"\uc12c\" + 0.014*\"\ubc29\uc548\" + 0.010*\"\uac1c\ubc1c\" + 0.008*\"\uc704\ud55c\" + 0.007*\"\uc601\ud5a5\" + 0.007*\"\ubc0f\" + 0.007*\"\ub530\ub978\" + 0.007*\"\uc639\uc9c4\uad70\" + 0.007*\"\ub3c4\uc11c\uc9c0\uc5ed\" + 0.007*\"\uc778\ucc9c\" + 0.007*\"\uad00\uad11\ud65c\uc131\ud654\""
+    },
+    {
+      "id": 10,
+      "words": "0.039*\"\ud65c\uc131\ud654\" + 0.030*\"\uc911\uc2ec\uc73c\ub85c\" + 0.026*\"\ubc29\uc548\" + 0.022*\"\uc5f0\uad6c\" + 0.017*\"\ud65c\uc6a9\ud55c\" + 0.017*\"\uc81c\uc8fc\" + 0.009*\"\uc0ac\ub840\" + 0.009*\"\ud574\ub140\ubb38\ud654\uc758\" + 0.009*\"\uc804\ub7b5\uacfc\" + 0.009*\"\uc758\ud55c\" + 0.009*\"\ub4f1\uc7ac\uc5d0\" + 0.009*\"\uc9c0\uc5ed\" + 0.009*\"\ub530\ub978\" + 0.009*\"\uc720\ub124\uc2a4\ucf54\" + 0.009*\"\uc9c0\uc5ed\ube0c\ub79c\ub4dc\""
+    },
+    {
+      "id": 34,
+      "words": "0.052*\"of\" + 0.026*\"the\" + 0.023*\"on\" + 0.022*\"Island\" + 0.019*\"and\" + 0.016*\"\uc815\ucc45\" + 0.016*\"\uc77c\ubcf8\" + 0.012*\"\uc5f0\uad6c\" + 0.012*\"\uc704\ud55c\" + 0.008*\"\ud574\uc591\uad00\uad11\" + 0.008*\"\uc12c\" + 0.008*\"\uc232\" + 0.008*\"\uce58\uc720\uc758\" + 0.008*\"\uc804\ub77c\ub0a8\ub3c4\" + 0.008*\"\uc0b0\ub9bc\uc138\ub77c\ud53c\""
+    },
+    {
+      "id": 26,
+      "words": "0.023*\"\uad00\uad11\uac1c\ubc1c\" + 0.023*\"\ubc29\ud5a5\" + 0.019*\"\uc911\uc2ec\uc73c\ub85c\" + 0.018*\"\uc12c\" + 0.015*\"\uc18c\uace0\" + 0.015*\"\uad00\ud55c\" + 0.013*\"\uc704\ud55c\" + 0.011*\"\uc9c0\uc5ed\" + 0.011*\"\ud65c\uc131\ud654\ub97c\" + 0.008*\"\uc804\ub77c\ub0a8\ub3c4\" + 0.008*\"\ud544\uc694\uc131\uacfc\" + 0.008*\"\uc2e0\uc548\" + 0.008*\"\uc9c0\uc815\" + 0.008*\"\uc0dd\ud0dc\uad00\uad11\" + 0.008*\"\uae30\ub300\ud6a8\uacfc\""
+    },
+    {
+      "id": 36,
+      "words": "0.023*\"\uc601\ud5a5\" + 0.020*\"\ubbf8\uce58\ub294\" + 0.019*\"\uc5f0\uad6c\" + 0.017*\"\ud65c\uc6a9\ud55c\" + 0.016*\"\uad00\ud55c\" + 0.014*\"\uc704\ud55c\" + 0.011*\"\ud65c\uc131\ud654\ub97c\" + 0.011*\"\uad00\uad11\uac1c\ubc1c\uc758\" + 0.011*\"\uad00\uad11\uc0c1\ud488\ud654\" + 0.009*\"in\" + 0.009*\"\ub300\uc0c1\uc73c\ub85c\" + 0.007*\"\ubc29\uc548\" + 0.006*\"\uc9c0\uc5ed\" + 0.006*\"\uad00\uad11\" + 0.006*\"\uc911\uc2ec\uc73c\ub85c\""
+    },
+    {
+      "id": 16,
+      "words": "0.031*\"\ubc29\uc548\" + 0.028*\"\uc704\ud55c\" + 0.018*\"\uc5f0\uad6c\" + 0.016*\"\ud65c\uc131\ud654\" + 0.013*\"\ud1b5\ud55c\" + 0.013*\"\uc801\uc6a9\" + 0.013*\"\ud604\ud669\uacfc\" + 0.009*\"\uac1c\ubc1c\uc5d0\" + 0.009*\"\uad00\ud55c\" + 0.009*\"\ub300\uc0c1\uc73c\ub85c\" + 0.009*\"\ub3c4\uc11c\" + 0.009*\"\ub530\ub978\" + 0.009*\"\ud574\uc591\uad00\uad11\" + 0.009*\"\ubd80\uc720\uc2dd\" + 0.009*\"\ud574\uc0c1\ucd94\ubaa8\uacf5\uc6d0\""
+    },
+    {
+      "id": 21,
+      "words": "0.041*\"\ubc0f\" + 0.038*\"\uc5f0\uad6c\" + 0.037*\"\uc9c0\ud615\" + 0.031*\"\uc9c0\uc9c8\uacbd\uad00\" + 0.031*\"\uad00\ud55c\" + 0.021*\"\uc77c\ub300\uc758\" + 0.019*\"\ud2b9\uc131\" + 0.016*\"\ud2b9\uc131\uc5d0\" + 0.015*\"\ub3c4\uc11c\uc9c0\uc5ed\" + 0.013*\"\uc911\uc2ec\uc73c\ub85c\" + 0.011*\"\uc5ec\uc218\uc2dc\" + 0.010*\"\uc2e0\uc548\uad70\" + 0.009*\"\uc601\ud5a5\" + 0.009*\"\ubbf8\uce58\ub294\" + 0.008*\"\ub300\uc0c1\uc73c\ub85c\""
+    },
+    {
+      "id": 27,
+      "words": "0.028*\"\uc704\ud55c\" + 0.023*\"\uc5f0\uad6c\" + 0.023*\"\ubc29\ud5a5\" + 0.016*\"\uad00\uad11\" + 0.016*\"\uc12c\" + 0.013*\"\ud65c\uc6a9\ud55c\" + 0.013*\"\uc911\uc2ec\uc73c\ub85c\" + 0.010*\"\ubc0f\" + 0.010*\"\ubd84\uc11d\" + 0.010*\"\ud65c\uc6a9\" + 0.010*\"\uac1c\ubc1c\" + 0.010*\"\ud574\uc591\uad00\uad11\uc758\" + 0.010*\"\ubcf4\uc874\" + 0.010*\"\ud1b5\ud55c\" + 0.009*\"\uad00\uad11\ud65c\uc131\ud654\ub97c\""
+    },
+    {
+      "id": 5,
+      "words": "0.037*\"\uc12c\" + 0.031*\"\uc5f0\uad6c\" + 0.026*\"\uad00\ud55c\" + 0.024*\"\ubbf8\uce58\ub294\" + 0.019*\"\uc911\uc2ec\uc73c\ub85c\" + 0.019*\"\uc601\ud5a5\uc5d0\" + 0.016*\"\uad00\uad11\" + 0.016*\"\ucf58\ud150\uce20\" + 0.013*\"\ub300\ud55c\" + 0.013*\"\ub300\uc0c1\uc73c\ub85c\" + 0.010*\"\uc704\ud55c\" + 0.009*\"\uad00\uad11\uc758\" + 0.008*\"\ud589\ub3d9\uc758\ub3c4\uc5d0\" + 0.008*\"\uad00\uad11\uc9c0\" + 0.007*\"\ubc29\uc548\""
+    },
+    {
+      "id": 23,
+      "words": "0.046*\"\uc5f0\uad6c\" + 0.038*\"\ubbf8\uce58\ub294\" + 0.034*\"\uc911\uc2ec\uc73c\ub85c\" + 0.031*\"\uc601\ud5a5\" + 0.024*\"\ubc0f\" + 0.021*\"\uc7ac\ubc29\ubb38\uc5d0\" + 0.019*\"\uc120\ud0dd\uc18d\uc131\uc774\" + 0.016*\"\ub9cc\uc871\ub3c4\uc640\" + 0.013*\"\ud589\ub3d9\uc758\ub3c4\uc5d0\" + 0.011*\"\ub3c5\ub3c4\" + 0.011*\"\ud65c\uc131\ud654\ub97c\" + 0.011*\"\uc704\ud55c\" + 0.011*\"\ubb38\ud654\uacf5\uac04\uc73c\ub85c\uc11c\uc758\" + 0.011*\"\uc778\ubb38\uc815\uc2e0\ubb38\ud654\" + 0.008*\"\ubc29\uc548\""
+    },
+    {
+      "id": 20,
+      "words": "0.073*\"\uc5f0\uad6c\" + 0.059*\"\uad00\ud55c\" + 0.019*\"\uc12c\" + 0.014*\"\uacfc\uc81c\" + 0.014*\"\uad00\uacc4\" + 0.011*\"\uad00\uad11\uac1d\uc758\" + 0.011*\"\uc704\ud55c\" + 0.011*\"\uad00\uad11\ud0dc\ub3c4\uc640\" + 0.009*\"\uad00\uad11\uc9c0\" + 0.007*\"\uc911\uc2ec\uc73c\ub85c\" + 0.007*\"\uace0\uad70\uc0b0\uad70\ub3c4\" + 0.007*\"\uad70\uc9d1\" + 0.007*\"\uc2dd\ubb3c\uc0c1\" + 0.007*\"\ud2b9\uc9d5\uc5d0\" + 0.007*\"\uace4\ucda9\""
+    },
+    {
+      "id": 30,
+      "words": "0.035*\"\uc5f0\uad6c\" + 0.027*\"\uc911\uc2ec\uc73c\ub85c\" + 0.023*\"\uc12c\uc758\" + 0.019*\"\uad00\uad11\uac1c\ubc1c\uc5d0\" + 0.016*\"\ub300\ud55c\" + 0.015*\"\ud1a0\uc591\ud658\uacbd\" + 0.015*\"\uac2f\ubc8c\uacfc\" + 0.015*\"\uac00\uace0\" + 0.015*\"\uc2f6\uc740\" + 0.015*\"\ud65c\uc6a9\ud55c\" + 0.015*\"\uc8fc\ubbfc\uc758\uc2dd\uc870\uc0ac\" + 0.011*\"\uc704\ud55c\" + 0.008*\"\uad00\ud55c\" + 0.008*\"\ud2b9\uc131\u2165\" + 0.008*\"\uc6b0\uc774\ub3c4\""
+    },
+    {
+      "id": 22,
+      "words": "0.040*\"\uc5f0\uad6c\" + 0.030*\"\uad00\ud55c\" + 0.015*\"\ud65c\uc131\ud654\" + 0.010*\"\ubc0f\" + 0.010*\"\ubc29\uc548\" + 0.010*\"\uc911\uc2ec\uc73c\ub85c\" + 0.010*\"\uc870\uc0ac\" + 0.010*\"\uc18c\uc548\ub3c4\" + 0.010*\"\ub3c4\uc11c\uc790\uc6d0\uc758\" + 0.010*\"\uad00\uad11\uc2a4\ud1a0\ub9ac\ud154\ub9c1\uc5d0\" + 0.010*\"\ubb38\ud654\uad00\uad11\uc0b0\uc5c5\ud654\uc640\" + 0.010*\"\ud558\ud0dc\ub3c4\" + 0.010*\"\uad00\uad11\uac1c\ubc1c\uc5d0\" + 0.010*\"\uc8fc\ubbfc\uc758\uc2dd\" + 0.010*\"\ud574\uc591\uad00\uad11\""
+    },
+    {
+      "id": 12,
+      "words": "0.049*\"\uc5f0\uad6c\" + 0.034*\"\uc911\uc2ec\uc73c\ub85c\" + 0.031*\"\uc12c\" + 0.026*\"\uad00\ud55c\" + 0.014*\"\uc12c\uc744\" + 0.012*\"\uc804\ub7b5\" + 0.012*\"\uc704\ud55c\" + 0.012*\"\ud65c\uc6a9\ud55c\" + 0.012*\"\ud3c9\uac00\" + 0.009*\"\uad00\uad11\" + 0.009*\"\uac1c\ubc1c\" + 0.009*\"\ud65c\uc131\ud654\" + 0.009*\"\ubc29\uc548\" + 0.009*\"\ud574\uc591\uad00\uad11\" + 0.009*\"\uc778\uc2dd\""
+    },
+    {
+      "id": 9,
+      "words": "0.039*\"\ud1b5\ud55c\" + 0.024*\"\ubc0f\" + 0.020*\"\uc911\uc2ec\uc73c\ub85c\" + 0.016*\"\ud37c\uc2a4\ub12c\ub9ac\ud2f0\" + 0.012*\"\ubc1c\uc804\" + 0.012*\"\uc9c0\uc18d\uac00\ub2a5\ud55c\" + 0.012*\"\ubd84\uc11d\uc744\" + 0.008*\"\ubbf8\uce58\ub294\" + 0.008*\"\uc601\ud5a5\" + 0.008*\"\uc790\uc5f0\uacbd\uad00\" + 0.008*\"\ube0c\ub79c\ub4dc\" + 0.008*\"\uc5f0\uad6c\" + 0.008*\"\ud589\ub3d9\uc758\ub3c4\uc5d0\" + 0.008*\"\uc2e0\uc548\uad70\" + 0.008*\"\uc0ac\ub840\uc5f0\uad6c\""
+    },
+    {
+      "id": 14,
+      "words": "0.045*\"\uc911\uc2ec\uc73c\ub85c\" + 0.021*\"\uad00\ud55c\" + 0.016*\"\uc704\ud55c\" + 0.016*\"\uc12c\" + 0.012*\"\uc601\ud5a5\" + 0.012*\"\uace0\ucc30\" + 0.012*\"\uc9c0\uc5ed\" + 0.012*\"\ubbf8\uce58\ub294\" + 0.012*\"\ud589\ub3d9\uc758\ub3c4\uc5d0\" + 0.009*\"\ubc0f\" + 0.008*\"\ubc29\ud5a5\" + 0.008*\"\ubd84\uc11d\" + 0.008*\"\ubc29\ubb38\uac1d\uc758\" + 0.008*\"\ud574\uc591\uad00\uad11\" + 0.008*\"\uc9c0\uc2ec\ub3c4\""
+    },
+    {
+      "id": 6,
+      "words": "0.034*\"\uc12c\" + 0.030*\"\uc704\ud55c\" + 0.026*\"\ubc29\uc548\" + 0.023*\"\uc5f0\uad6c\" + 0.015*\"\ubc0f\" + 0.015*\"\uad00\uad11\" + 0.015*\"\uac1c\uc120\uc744\" + 0.015*\"\uc12c\uad00\uad11\" + 0.015*\"\uc804\ub0a8\" + 0.011*\"\uc911\uc2ec\uc73c\ub85c\" + 0.011*\"\ubd84\uc11d\" + 0.011*\"\uad00\uad11\uc790\uc6d0\uc758\" + 0.011*\"\uc9c0\uc5ed\" + 0.011*\"\ud65c\uc131\ud654\" + 0.011*\"\ud65c\uc6a9\ubc29\uc548\""
+    }
+  ],
+  "topic_images": [
+    {
+      "id": 0,
+      "path": "topic_images/topic_1_8928.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_1_8928.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 1,
+      "path": "topic_images/topic_2_1086.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_2_1086.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 2,
+      "path": "topic_images/topic_3_2495.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_3_2495.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 3,
+      "path": "topic_images/topic_4_3070.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_4_3070.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 4,
+      "path": "topic_images/topic_5_7843.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_5_7843.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 5,
+      "path": "topic_images/topic_6_8396.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_6_8396.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 6,
+      "path": "topic_images/topic_7_4811.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_7_4811.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 7,
+      "path": "topic_images/topic_8_230.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_8_230.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 8,
+      "path": "topic_images/topic_9_4766.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_9_4766.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 9,
+      "path": "topic_images/topic_10_1132.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_10_1132.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 10,
+      "path": "topic_images/topic_11_8246.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_11_8246.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 11,
+      "path": "topic_images/topic_12_364.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_12_364.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 12,
+      "path": "topic_images/topic_13_3318.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_13_3318.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 13,
+      "path": "topic_images/topic_14_8449.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_14_8449.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 14,
+      "path": "topic_images/topic_15_7981.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_15_7981.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 15,
+      "path": "topic_images/topic_16_1270.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_16_1270.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 16,
+      "path": "topic_images/topic_17_8030.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_17_8030.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 17,
+      "path": "topic_images/topic_18_1936.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_18_1936.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 18,
+      "path": "topic_images/topic_19_5598.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_19_5598.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 19,
+      "path": "topic_images/topic_20_1617.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_20_1617.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 20,
+      "path": "topic_images/topic_21_8491.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_21_8491.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 21,
+      "path": "topic_images/topic_22_391.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_22_391.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 22,
+      "path": "topic_images/topic_23_9683.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_23_9683.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 23,
+      "path": "topic_images/topic_24_5893.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_24_5893.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 24,
+      "path": "topic_images/topic_25_2844.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_25_2844.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 25,
+      "path": "topic_images/topic_26_1605.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_26_1605.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 26,
+      "path": "topic_images/topic_27_9347.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_27_9347.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 27,
+      "path": "topic_images/topic_28_3065.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_28_3065.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 28,
+      "path": "topic_images/topic_29_1625.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_29_1625.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 29,
+      "path": "topic_images/topic_30_381.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_30_381.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 30,
+      "path": "topic_images/topic_31_9941.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_31_9941.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 31,
+      "path": "topic_images/topic_32_9271.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_32_9271.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 32,
+      "path": "topic_images/topic_33_3799.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_33_3799.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 33,
+      "path": "topic_images/topic_34_5712.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_34_5712.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 34,
+      "path": "topic_images/topic_35_6195.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_35_6195.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 35,
+      "path": "topic_images/topic_36_9066.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_36_9066.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 36,
+      "path": "topic_images/topic_37_3598.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_37_3598.png?download=false&session_id=ecd79ae8c7"
+    },
+    {
+      "id": 37,
+      "path": "topic_images/topic_38_3714.png",
+      "url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_38_3714.png?download=false&session_id=ecd79ae8c7"
+    }
+  ],
+  "pyldavis_html": "html encoding",
+
+  "csv_download_url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/lda_result.csv?download=true&session_id=ecd79ae8c7",
+  "csv_path": "topic_images/lda_result.csv",
+  "network_img_path": "topic_images/topic_network_academic_2916.png",
+  "network_img_url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_network_academic_2916.png?download=false&session_id=ecd79ae8c7",
+  "network_style": "academic"
+}

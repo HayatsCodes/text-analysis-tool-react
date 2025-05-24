@@ -5,11 +5,13 @@ import { LDAForm } from "../components/lda-form/lda-form";
 import { LDAKeywordEditor } from "../components/lda-keyword-editor/lda-keyword-editor";
 import { LDATabs } from "../components/lda-tabs/lda-tabs";
 import { useSidebarState } from "../components/sidebar-layout/sidebar-state-context";
+import { LDAResponse } from "../types/lda";
 
 type Step = 1 | 2 | 3;
 
 export default function LDAPage() {
   const [step, setStep] = useState<Step>(1);
+  const [ldaData, setLdaData] = useState<LDAResponse | null>(null);
   const { setCurrentSection, setCurrentChild } = useSidebarState();
 
   useEffect(() => {
@@ -17,10 +19,15 @@ export default function LDAPage() {
     setCurrentChild("lda");
   }, [setCurrentSection, setCurrentChild]);
 
+  function handleLdaProcessed(data: LDAResponse) {
+    setLdaData(data);
+    setStep(2);
+  }
+
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      {step === 1 && <LDAForm onProcessed={() => setStep(2)} />}
-      {step === 2 && <LDAKeywordEditor onNext={() => setStep(3)} />}
+    <div className="w-full h-full flex flex-col items-center justify-center py-8">
+      {step === 1 && <LDAForm onProcessed={handleLdaProcessed} />}
+      {step === 2 && ldaData && <LDAKeywordEditor ldaResponse={ldaData} onNext={() => setStep(3)} />}
       {step === 3 && <LDATabs />}
     </div>
   );
