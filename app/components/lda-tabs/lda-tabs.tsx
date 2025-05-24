@@ -23,12 +23,26 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { LDAResponse } from "../../types/lda";
+import { LDAResponse, LDAKeyword } from "../../types/lda";
 
 type LdaTabValue = 'model' | 'topic' | 'chart' | 'network' | 'cloud' | 'interactive';
 
 interface LDATabsProps {
   ldaResponse: LDAResponse | null;
+}
+
+function parseKeywordsString(topicId: number, wordsString: string): LDAKeyword[] {
+  if (!wordsString) return [];
+  return wordsString.split(' + ').map((part, index) => {
+    const [weightStr, keywordWithQuotes] = part.split('*');
+    const weight = parseFloat(weightStr);
+    const text = keywordWithQuotes ? keywordWithQuotes.replace(/^"|"$/g, '').replace(/\\"/g, '"') : "";
+    return {
+      id: `topic${topicId}_kw${index}`,
+      text,
+      weight,
+    };
+  }).filter(kw => kw.text && !isNaN(kw.weight));
 }
 
 export function LDATabs({ ldaResponse }: LDATabsProps) {
@@ -105,25 +119,45 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
             <CardDescription className="text-sm">Keywords and details for each identified topic.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {[1, 2].map(topicIndex => (
-              <div key={topicIndex} className="border rounded-lg p-4 bg-white">
-                <div className="flex flex-row items-center justify-between mb-2">
-                  <h3 className="text-base font-medium text-gray-700">Topic {String(topicIndex).padStart(2, '0')}</h3>
-            <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="text-blue-600 border-blue-500 hover:bg-blue-50 hover:text-blue-700 h-8">
-                      <Edit3 className="mr-1.5 h-3.5 w-3.5" />
-                      Edit Keywords
-                    </Button>
-                    <span className="bg-blue-100 text-blue-700 text-xs rounded-full px-2.5 py-1 font-semibold">
-                      40 keywords
-                    </span>
-            </div>
-          </div>
-                <div className="border rounded-md w-full min-h-[6rem] bg-slate-50 p-2 text-gray-500 text-xs">
-                  Keywords for Topic {String(topicIndex).padStart(2, '0')} will be displayed here...
-                </div>
-              </div>
-            ))}
+            {ldaResponse.topics && ldaResponse.topics.length > 0 ? (
+              [...ldaResponse.topics]
+                .sort((a, b) => a.id - b.id)
+                .map(topic => {
+                  const keywords = parseKeywordsString(topic.id, topic.words);
+                  return (
+                    <div key={topic.id} className="border rounded-lg p-4 bg-white">
+                      <div className="flex flex-row items-center justify-between mb-2">
+                        <h3 className="text-base font-medium text-gray-700">Topic {topic.id}</h3>
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="sm" className="text-blue-600 border-blue-500 hover:bg-blue-50 hover:text-blue-700 h-8">
+                            <Edit3 className="mr-1.5 h-3.5 w-3.5" />
+                            Edit Keywords
+                          </Button>
+                          <span className="bg-blue-100 text-blue-700 text-xs rounded-full px-2.5 py-1 font-semibold">
+                            {keywords.length} keywords
+                          </span>
+                        </div>
+                      </div>
+                      <div className="border rounded-md w-full min-h-[6rem] bg-slate-50 p-3 text-gray-700 text-xs">
+                        {keywords.length > 0 ? (
+                          <div className="flex flex-wrap gap-1.5">
+                            {keywords.map(kw => (
+                              <div key={kw.id} className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs flex items-center shadow-sm">
+                                <span>{kw.text}</span>
+                                <span className="ml-1.5 text-blue-600 opacity-75 text-[0.65rem]">({kw.weight.toFixed(4)})</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-center text-gray-500 italic">No keywords for this topic.</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+            ) : (
+              <p className="text-center text-gray-500 py-4">No topics available.</p>
+            )}
           </CardContent>
         </Card>
       </TabsContent>
@@ -151,20 +185,32 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
               </Button>
             </div>
             <div className="grid md:grid-cols-2 gap-4">
-              {[1, 2].map(topicIndex => (
-                <div key={topicIndex} className="border rounded-lg p-3 bg-white">
-                  <div className="flex flex-row items-center justify-between mb-2">
-                    <h3 className="text-base font-medium text-gray-700">Topic {topicIndex} Keywords</h3>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500 hover:bg-gray-200">
-                      <Download className="h-4 w-4" />
-                      <span className="sr-only">Download Chart</span>
-                    </Button>
+              {ldaResponse.topic_images && ldaResponse.topic_images.length > 0 ? (
+                ldaResponse.topic_images.map((topicImage, index) => (
+                  <div key={topicImage.id || index} className="border rounded-lg p-3 bg-white">
+                    <div className="flex flex-row items-center justify-between mb-2">
+                      <h3 className="text-base font-medium text-gray-700">Topic {index + 1} Chart</h3> 
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500 hover:bg-gray-200">
+                        <Download className="h-4 w-4" />
+                        <span className="sr-only">Download Chart</span>
+                      </Button>
+                    </div>
+                    <div className="border rounded-lg h-48 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                      {topicImage.url ? (
+                        <img 
+                          src={topicImage.url.replace(/^http:\/\//i, 'https://')}
+                          alt={`Topic ${index + 1} Chart`} 
+                          className="max-w-full max-h-full object-contain" 
+                        />
+                      ) : (
+                        <p>Chart not available.</p>
+                      )}
+                    </div>
                   </div>
-                  <div className="border rounded-lg h-48 bg-slate-50 flex items-center justify-center text-gray-400 text-xs">
-                    Chart for Topic {topicIndex}
-          </div>
-        </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4 md:col-span-2">No topic charts available.</p>
+              )}
             </div>
           </CardContent>
         </Card>
