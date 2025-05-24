@@ -83,10 +83,10 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md">
-      <Card className="p-6">
-        <div className="space-y-6">
-          <div className="space-y-4">
+    <div className="w-full max-w-md py-6 sm:py-8">
+      <Card className="p-4 sm:p-6">
+        <div className="space-y-4 sm:space-y-6">
+          <div className="space-y-3 sm:space-y-4">
             <FormField label="Visualization Style">
               <Select value={visualizationStyle} onValueChange={setVisualizationStyle}>
                 <SelectTrigger className={selectStyles.trigger}>
@@ -118,7 +118,7 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
             </FormField>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <FormField label="Minimum Number of Topics">
               <Input
                 type="number"
@@ -142,7 +142,7 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
             </FormField>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <FormField label="Minimum Document Frequency">
               <Input
                 type="number"
@@ -166,7 +166,7 @@ export function LDAForm({ onProcessed }: LDAFormProps) {
             </FormField>
           </div>
 
-          <div className="flex justify-center pt-4">
+          <div className="flex justify-center pt-2 sm:pt-4">
             <Button
               onClick={handleProcess}
               disabled={isProcessing || !column}

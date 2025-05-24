@@ -21,7 +21,7 @@ export default function Home() {
 
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
+    <div className="w-full h-full flex flex-col items-center justify-center pt-16 md:pt-0">
       {step === 1 && (
         <div className="w-full flex flex-col items-center">
           <FileUpload

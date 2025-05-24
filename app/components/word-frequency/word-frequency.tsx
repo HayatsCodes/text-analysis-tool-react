@@ -98,9 +98,9 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md">
-      <Card className="p-6">
-        <div className="space-y-6">
+    <div className="w-full max-w-md py-6 sm:py-8">
+      <Card className="p-4 sm:p-6">
+        <div className="space-y-4 sm:space-y-6">
           <FormField label="Select Text Column">
             <Select value={column} onValueChange={setColumn}>
               <SelectTrigger className={selectStyles.trigger}>
@@ -114,7 +114,7 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
             </Select>
           </FormField>
 
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <FormField label="Word Cloud Format">
               <Select value={format} onValueChange={(value) => setFormat(value as CloudShapeType)}>
                 <SelectTrigger className={selectStyles.trigger}>
@@ -167,7 +167,7 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
             </FormField>
           </div>
 
-          <div className="flex justify-center pt-4">
+          <div className="flex justify-center pt-2 sm:pt-4">
             <Button
               onClick={handleAnalyze}
               disabled={isAnalyzing || !column}

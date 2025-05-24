@@ -121,15 +121,15 @@ export function FileUpload({ onUpload, onSelectColumn }: FileUploadProps) {
         />
         {!uploadedFile ? (
           <>
-            <span className="font-semibold text-lg">Drag & Drop your CSV or XLSX file</span>
-            <span className="text-xs text-gray-500 mt-2">
+            <span className="font-semibold text-md sm:text-lg text-center px-2">Drag & Drop your CSV or XLSX file</span>
+            <span className="text-xs sm:text-sm text-gray-500 mt-2">
               or <span className="text-blue-600 underline cursor-pointer">browse files</span> on your computer
             </span>
-            <span className="text-xs text-gray-500 mt-1">Only CSV or XLSX files are accepted</span>
+            <span className="text-xs sm:text-sm text-gray-500 mt-1">Only CSV or XLSX files are accepted</span>
           </>
         ) : (
           <>
-            <span className="text-base text-gray-700 mt-2">{uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}kb)</span>
+            <span className="text-sm sm:text-base text-gray-700 mt-2 text-center px-2">{uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)}kb)</span>
             {isUploaded ? (
               <span className="ml-2 text-green-600" title="Uploaded">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 inline">

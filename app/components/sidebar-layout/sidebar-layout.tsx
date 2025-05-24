@@ -3,6 +3,7 @@ import React from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebarState } from "./sidebar-state-context";
+import { Menu } from 'lucide-react';
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -10,16 +11,26 @@ interface SidebarLayoutProps {
 
 export function SidebarLayout({ children }: SidebarLayoutProps) {
   const { currentSection, currentChild } = useSidebarState();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <aside className="fixed top-0 left-0 z-40 w-64 h-full bg-blue-700 text-white flex flex-col p-4 pt-10 overflow-y-auto">
-        {/* Menu Button */}
-        <button className="flex items-center gap-2 font-bold bg-white/100 text-blue-700 rounded-lg px-3 py-2 mb-20 hover:bg-white/90 transition-colors text-sm">
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 z-40 w-64 h-full bg-blue-700 text-white flex flex-col p-4 pt-10 overflow-y-auto transition-transform duration-300 ease-in-out md:translate-x-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        {/* Menu Button (now part of sidebar, but could be moved outside for persistent visibility) */}
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden flex items-center gap-2 font-bold bg-white/100 text-blue-700 rounded-lg px-3 py-2 mb-6 hover:bg-white/90 transition-colors text-sm self-start"
+        >
           <Image src="/menu_icon.png" alt="Menu" width={16} height={16} />
-          Menu
+          Close Menu
         </button>
-
         {/* Navigation Sections */}
         <nav className="flex flex-col gap-5">
           {/* Data Collection Section */}
@@ -109,7 +120,23 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
           </div>
         </nav>
       </aside>
-      <main className="flex-1 bg-white ml-64 overflow-y-auto p-4 sm:p-6 md:p-8">{children}</main>
+
+      {/* Main Content */}
+      <main
+        className={`flex-1 bg-white overflow-y-auto p-4 sm:p-6 md:p-8 transition-all duration-300 ease-in-out ${
+          isSidebarOpen ? 'md:ml-64' : 'md:ml-64'
+        }`}
+      >
+        {/* Hamburger Menu Button for mobile - placed in main content area for visibility */}
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden fixed top-4 left-4 z-50 p-2 bg-blue-700 text-white rounded-md hover:bg-blue-600 transition-colors"
+          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+        >
+          {isSidebarOpen ? <Menu className="h-5 w-5 mt-6 bg-white text-blue-700" /> : <Menu className="h-5 w-5" />}
+        </button>
+        {children}
+      </main>
     </div>
   );
 } 

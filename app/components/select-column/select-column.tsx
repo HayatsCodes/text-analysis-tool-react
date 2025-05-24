@@ -34,9 +34,9 @@ export function SelectColumn() {
   }
 
   return (
-    <Card className="p-6 w-full max-w-2xl">
-      <h2 className="text-xl font-semibold mb-6">Select Columns to Analyze</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <Card className="p-4 sm:p-6 w-full max-w-2xl">
+      <h2 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-center sm:text-left">Select Columns to Analyze</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
         {fileData.columns.map((column) => (
           <div
             key={column}

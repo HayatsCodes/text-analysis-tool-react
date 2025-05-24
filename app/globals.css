@@ -118,3 +118,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes twinkle {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.7); }
+  50% { box-shadow: 0 0 12px 4px rgba(255, 255, 255, 1); }
+}
