@@ -74,9 +74,9 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
             <CardDescription className="text-sm">Perplexity and Coherence scores for the generated LDA model.</CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 gap-4">
-            <div className="border-2 border-blue-500 rounded-lg p-4 bg-white">
+            <div className="border-2  rounded-lg p-4 bg-white">
               <h3 className="text-base font-medium text-gray-700 mb-2">Perplexity Score</h3>
-              <div className="border w-full border-black rounded-lg h-96 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+              <div className="border w-full border-blue-500 rounded-lg h-96 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
                 {perplexity_plot ? (
                   <img src={`data:image/png;base64,${perplexity_plot}`} alt="Perplexity Plot" className="w-full max-h-full object-fit object-center" />
                 ) : (
@@ -84,9 +84,9 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                 )}
             </div>
             </div>
-            <div className="border-2 border-blue-500 rounded-lg p-4 bg-white">
+            <div className="border-2  rounded-lg p-4 bg-white">
               <h3 className="text-base font-medium text-gray-700 mb-2">Coherence Score</h3>
-              <div className="border border-black rounded-lg h-96 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+              <div className="border border-blue-500 rounded-lg h-96 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
                 {coherence_plot ? (
                   <img src={`data:image/png;base64,${coherence_plot}`} alt="Coherence Plot" className="w-full max-h-full object-fit object-center" />
                 ) : (

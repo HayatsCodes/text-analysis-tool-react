@@ -25,7 +25,7 @@ export default function LDAPage() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center py-8">
+    <div className="w-full flex flex-col items-center py-8">
       {step === 1 && <LDAForm onProcessed={handleLdaProcessed} />}
       {step === 2 && ldaData && <LDAKeywordEditor ldaResponse={ldaData} onNext={() => setStep(3)} />}
       {step === 3 && <LDATabs ldaResponse={ldaData} />}

@@ -12,8 +12,8 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
   const { currentSection, currentChild } = useSidebarState();
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 bg-blue-700 text-white flex flex-col p-4 pt-10">
+    <div className="flex h-screen overflow-hidden">
+      <aside className="fixed top-0 left-0 z-40 w-64 h-full bg-blue-700 text-white flex flex-col p-4 pt-10 overflow-y-auto">
         {/* Menu Button */}
         <button className="flex items-center gap-2 font-bold bg-white/100 text-blue-700 rounded-lg px-3 py-2 mb-20 hover:bg-white/90 transition-colors text-sm">
           <Image src="/menu_icon.png" alt="Menu" width={16} height={16} />
@@ -109,7 +109,7 @@ export function SidebarLayout({ children }: SidebarLayoutProps) {
           </div>
         </nav>
       </aside>
-      <main className="flex-1 bg-white flex items-center justify-center min-h-screen">{children}</main>
+      <main className="flex-1 bg-white ml-64 overflow-y-auto p-4 sm:p-6 md:p-8">{children}</main>
     </div>
   );
 } 
