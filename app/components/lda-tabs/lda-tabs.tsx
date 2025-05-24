@@ -56,7 +56,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
     );
   }
 
-  const { coherence_plot, perplexity_plot, topic_images } = ldaResponse;
+  const { coherence_plot, perplexity_plot, topic_images, network_img_url, pyldavis_html } = ldaResponse;
 
   function handleDownloadChart(chartUrl?: string) {
     if (chartUrl) {
@@ -264,9 +264,17 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                 Apply
               </Button>
             </div>
-            <div className="border rounded-lg h-80 bg-white flex items-center justify-center text-gray-400 text-xs">
-              Network Visualization Area
-          </div>
+            <div className="border border-blue-500 rounded-lg h-100 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+              {network_img_url ? (
+                <img 
+                  src={network_img_url.replace(/^http:\/\//i, 'https://')}
+                  alt="Topic-Keyword Network Visualization" 
+                    className="w-full h-full object-fit object-center"
+                  />
+              ) : (
+                <p>Network visualization not available.</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </TabsContent>
@@ -312,12 +320,21 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
               </Button>
               <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white h-9 text-xs px-4 ml-auto">
                 <RefreshCw className="mr-1.5 h-4 w-4" />
-              Apply
+                Apply
               </Button>
           </div>
-            <div className="border rounded-lg min-h-[20rem] h-80 bg-white flex items-center justify-center text-gray-400 text-xs">
-              Interactive Visualization Area
-          </div>
+            <div className="border rounded-lg min-h-[20rem] h-96 bg-white flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+              {pyldavis_html ? (
+                <iframe
+                  srcDoc={pyldavis_html}
+                  title="Interactive pyLDAvis"
+                  className="w-full h-full border-0"
+                  sandbox="allow-scripts allow-same-origin"
+                />
+              ) : (
+                <p>Interactive visualization not available.</p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </TabsContent>
