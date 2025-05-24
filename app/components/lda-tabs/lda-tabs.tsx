@@ -81,27 +81,27 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
   return (
     <Tabs defaultValue="model" className="w-full max-w-5xl mt-6 pb-6">
       <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-4 h-auto">
-        <TabsTrigger value="model" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+        <TabsTrigger value="model" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5" /> Model Score
         </TabsTrigger>
-        <TabsTrigger value="topic" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+        <TabsTrigger value="topic" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <Library className="h-4 w-4 sm:h-5 sm:w-5" /> Topic
         </TabsTrigger>
-        <TabsTrigger value="chart" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+        <TabsTrigger value="chart" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <PieChart className="h-4 w-4 sm:h-5 sm:w-5" /> Topic Chart
         </TabsTrigger>
-        <TabsTrigger value="network" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+        <TabsTrigger value="network" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <NetworkIcon className="h-4 w-4 sm:h-5 sm:w-5" /> Network
         </TabsTrigger>
-        <TabsTrigger value="cloud" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+        <TabsTrigger value="cloud" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <Cloud className="h-4 w-4 sm:h-5 sm:w-5" /> Word Cloud
         </TabsTrigger>
-        <TabsTrigger value="interactive" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+        <TabsTrigger value="interactive" className="flex-col sm:flex-row items-center justify-center gap-1.5 py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <PlayCircle className="h-4 w-4 sm:h-5 sm:w-5" /> Interactive
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="model">
+      <TabsContent value="model" className="mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold">Model Performance Scores</CardTitle>
@@ -132,7 +132,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
         </Card>
       </TabsContent>
 
-      <TabsContent value="topic">
+      <TabsContent value="topic" className="mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
            <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold">Topic Overview</CardTitle>
@@ -165,9 +165,9 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                               <div key={kw.id} className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs flex items-center shadow-sm">
                                 <span>{kw.text}</span>
                                 <span className="ml-1.5 text-blue-600 opacity-75 text-[0.65rem]">({kw.weight.toFixed(4)})</span>
-                              </div>
-                            ))}
-                          </div>
+            </div>
+          ))}
+        </div>
                         ) : (
                           <p className="text-center text-gray-500 italic">No keywords for this topic.</p>
                         )}
@@ -182,7 +182,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
         </Card>
       </TabsContent>
 
-      <TabsContent value="chart">
+      <TabsContent value="chart" className="mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold">Topic Keyword Charts</CardTitle>
@@ -220,7 +220,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                         <Download className="mr-1.5 h-3.5 w-3.5" />
                         Download
                       </Button>
-                    </div>
+          </div>
                     <div className="border rounded-lg h-80 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
                       {topicImage.url ? (
                         <img 
@@ -231,8 +231,8 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                       ) : (
                         <p>Chart not available.</p>
                       )}
-                    </div>
-                  </div>
+          </div>
+        </div>
                 ))
               ) : (
                 <p className="text-center text-gray-500 py-4 md:col-span-2">No topic charts available.</p>
@@ -242,7 +242,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
         </Card>
       </TabsContent>
 
-      <TabsContent value="network">
+      <TabsContent value="network" className="mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold">Topic-Keyword Network</CardTitle>
@@ -274,12 +274,12 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
               ) : (
                 <p>Network visualization not available.</p>
               )}
-            </div>
+          </div>
           </CardContent>
         </Card>
       </TabsContent>
 
-      <TabsContent value="cloud">
+      <TabsContent value="cloud" className="mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-semibold">Topic Word Clouds</CardTitle>
@@ -298,7 +298,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
         </Card>
       </TabsContent>
 
-      <TabsContent value="interactive">
+      <TabsContent value="interactive" className="mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
            <CardHeader className="">
             <CardTitle className="text-lg font-semibold">Interactive pyLDAvis View</CardTitle>
@@ -315,8 +315,8 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                 />
               ) : (
                 <p>Interactive visualization not available.</p>
-              )}
-            </div>
+      )}
+    </div>
           </CardContent>
         </Card>
       </TabsContent>
