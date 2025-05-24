@@ -56,7 +56,27 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
     );
   }
 
-  const { coherence_plot, perplexity_plot } = ldaResponse;
+  const { coherence_plot, perplexity_plot, topic_images } = ldaResponse;
+
+  function handleDownloadChart(chartUrl?: string) {
+    if (chartUrl) {
+      let downloadUrl = chartUrl.replace(/^http:\/\//i, 'https://');
+      const url = new URL(downloadUrl);
+      url.searchParams.set('download', 'true');
+      downloadUrl = url.toString();
+
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      // link.download = `topic_chart_${/* you might want to add an ID or name here */}.png`; // Optional: to suggest a filename
+      link.target = '_blank'; // Good practice to open in new tab if direct download is blocked
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      console.error('No chart URL available for download.');
+      // Optionally, show a toast notification to the user
+    }
+  }
 
   return (
     <Tabs defaultValue="model" className="w-full max-w-5xl mt-6 pb-6">
@@ -184,23 +204,29 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
                 Apply
               </Button>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              {ldaResponse.topic_images && ldaResponse.topic_images.length > 0 ? (
-                ldaResponse.topic_images.map((topicImage, index) => (
-                  <div key={topicImage.id || index} className="border rounded-lg p-3 bg-white">
+            <div className="grid grid-cols-1 gap-4">
+              {topic_images && topic_images.length > 0 ? (
+                topic_images.map((topicImage, index) => (
+                  <div key={topicImage.id || index} className="border border-black rounded-lg p-3 bg-white">
                     <div className="flex flex-row items-center justify-between mb-2">
                       <h3 className="text-base font-medium text-gray-700">Topic {index + 1} Chart</h3> 
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500 hover:bg-gray-200">
-                        <Download className="h-4 w-4" />
-                        <span className="sr-only">Download Chart</span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-blue-600 border-blue-500 hover:bg-blue-50 hover:text-blue-700 h-8"
+                        onClick={() => handleDownloadChart(topicImage.url)}
+                        disabled={!topicImage.url}
+                      >
+                        <Download className="mr-1.5 h-3.5 w-3.5" />
+                        Download
                       </Button>
                     </div>
-                    <div className="border rounded-lg h-48 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                    <div className="border rounded-lg h-80 bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
                       {topicImage.url ? (
                         <img 
                           src={topicImage.url.replace(/^http:\/\//i, 'https://')}
                           alt={`Topic ${index + 1} Chart`} 
-                          className="max-w-full max-h-full object-contain" 
+                          className="w-full max-h-full object-fit object-center" 
                         />
                       ) : (
                         <p>Chart not available.</p>
