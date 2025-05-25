@@ -282,5 +282,197 @@
   "csv_path": "topic_images/lda_result.csv",
   "network_img_path": "topic_images/topic_network_academic_2916.png",
   "network_img_url": "http://analysis-app-ruud.onrender.com/api/files/topic_images/topic_network_academic_2916.png?download=false&session_id=ecd79ae8c7",
-  "network_style": "academic"
+  "network_style": "academic",
+  "wordcloud_paths": [
+        {
+            "filename": "topic_1_wordcloud_5896.png",
+            "path": "word_clouds/topic_1_wordcloud_5896.png",
+            "topic_id": 0
+        },
+        {
+            "filename": "topic_2_wordcloud_5896.png",
+            "path": "word_clouds/topic_2_wordcloud_5896.png",
+            "topic_id": 1
+        },
+        {
+            "filename": "topic_3_wordcloud_5896.png",
+            "path": "word_clouds/topic_3_wordcloud_5896.png",
+            "topic_id": 2
+        },
+        {
+            "filename": "topic_4_wordcloud_5896.png",
+            "path": "word_clouds/topic_4_wordcloud_5896.png",
+            "topic_id": 3
+        },
+        {
+            "filename": "topic_5_wordcloud_5896.png",
+            "path": "word_clouds/topic_5_wordcloud_5896.png",
+            "topic_id": 4
+        },
+        {
+            "filename": "topic_6_wordcloud_5896.png",
+            "path": "word_clouds/topic_6_wordcloud_5896.png",
+            "topic_id": 5
+        },
+        {
+            "filename": "topic_7_wordcloud_5896.png",
+            "path": "word_clouds/topic_7_wordcloud_5896.png",
+            "topic_id": 6
+        },
+        {
+            "filename": "topic_8_wordcloud_5896.png",
+            "path": "word_clouds/topic_8_wordcloud_5896.png",
+            "topic_id": 7
+        },
+        {
+            "filename": "topic_9_wordcloud_5896.png",
+            "path": "word_clouds/topic_9_wordcloud_5896.png",
+            "topic_id": 8
+        },
+        {
+            "filename": "topic_10_wordcloud_5896.png",
+            "path": "word_clouds/topic_10_wordcloud_5896.png",
+            "topic_id": 9
+        },
+        {
+            "filename": "topic_11_wordcloud_5896.png",
+            "path": "word_clouds/topic_11_wordcloud_5896.png",
+            "topic_id": 10
+        },
+        {
+            "filename": "topic_12_wordcloud_5896.png",
+            "path": "word_clouds/topic_12_wordcloud_5896.png",
+            "topic_id": 11
+        },
+        {
+            "filename": "topic_13_wordcloud_5896.png",
+            "path": "word_clouds/topic_13_wordcloud_5896.png",
+            "topic_id": 12
+        },
+        {
+            "filename": "topic_14_wordcloud_5896.png",
+            "path": "word_clouds/topic_14_wordcloud_5896.png",
+            "topic_id": 13
+        },
+        {
+            "filename": "topic_15_wordcloud_5896.png",
+            "path": "word_clouds/topic_15_wordcloud_5896.png",
+            "topic_id": 14
+        },
+        {
+            "filename": "topic_16_wordcloud_5896.png",
+            "path": "word_clouds/topic_16_wordcloud_5896.png",
+            "topic_id": 15
+        },
+        {
+            "filename": "topic_17_wordcloud_5896.png",
+            "path": "word_clouds/topic_17_wordcloud_5896.png",
+            "topic_id": 16
+        },
+        {
+            "filename": "topic_18_wordcloud_5896.png",
+            "path": "word_clouds/topic_18_wordcloud_5896.png",
+            "topic_id": 17
+        },
+        {
+            "filename": "topic_19_wordcloud_5896.png",
+            "path": "word_clouds/topic_19_wordcloud_5896.png",
+            "topic_id": 18
+        },
+        {
+            "filename": "topic_20_wordcloud_5896.png",
+            "path": "word_clouds/topic_20_wordcloud_5896.png",
+            "topic_id": 19
+        },
+        {
+            "filename": "topic_21_wordcloud_5896.png",
+            "path": "word_clouds/topic_21_wordcloud_5896.png",
+            "topic_id": 20
+        },
+        {
+            "filename": "topic_22_wordcloud_5896.png",
+            "path": "word_clouds/topic_22_wordcloud_5896.png",
+            "topic_id": 21
+        },
+        {
+            "filename": "topic_23_wordcloud_5896.png",
+            "path": "word_clouds/topic_23_wordcloud_5896.png",
+            "topic_id": 22
+        },
+        {
+            "filename": "topic_24_wordcloud_5896.png",
+            "path": "word_clouds/topic_24_wordcloud_5896.png",
+            "topic_id": 23
+        },
+        {
+            "filename": "topic_25_wordcloud_5896.png",
+            "path": "word_clouds/topic_25_wordcloud_5896.png",
+            "topic_id": 24
+        },
+        {
+            "filename": "topic_26_wordcloud_5896.png",
+            "path": "word_clouds/topic_26_wordcloud_5896.png",
+            "topic_id": 25
+        },
+        {
+            "filename": "topic_27_wordcloud_5896.png",
+            "path": "word_clouds/topic_27_wordcloud_5896.png",
+            "topic_id": 26
+        },
+        {
+            "filename": "topic_28_wordcloud_5896.png",
+            "path": "word_clouds/topic_28_wordcloud_5896.png",
+            "topic_id": 27
+        },
+        {
+            "filename": "topic_29_wordcloud_5896.png",
+            "path": "word_clouds/topic_29_wordcloud_5896.png",
+            "topic_id": 28
+        },
+        {
+            "filename": "topic_30_wordcloud_5896.png",
+            "path": "word_clouds/topic_30_wordcloud_5896.png",
+            "topic_id": 29
+        },
+        {
+            "filename": "topic_31_wordcloud_5896.png",
+            "path": "word_clouds/topic_31_wordcloud_5896.png",
+            "topic_id": 30
+        },
+        {
+            "filename": "topic_32_wordcloud_5896.png",
+            "path": "word_clouds/topic_32_wordcloud_5896.png",
+            "topic_id": 31
+        },
+        {
+            "filename": "topic_33_wordcloud_5896.png",
+            "path": "word_clouds/topic_33_wordcloud_5896.png",
+            "topic_id": 32
+        },
+        {
+            "filename": "topic_34_wordcloud_5896.png",
+            "path": "word_clouds/topic_34_wordcloud_5896.png",
+            "topic_id": 33
+        },
+        {
+            "filename": "topic_35_wordcloud_5896.png",
+            "path": "word_clouds/topic_35_wordcloud_5896.png",
+            "topic_id": 34
+        },
+        {
+            "filename": "topic_36_wordcloud_5896.png",
+            "path": "word_clouds/topic_36_wordcloud_5896.png",
+            "topic_id": 35
+        },
+        {
+            "filename": "topic_37_wordcloud_5896.png",
+            "path": "word_clouds/topic_37_wordcloud_5896.png",
+            "topic_id": 36
+        },
+        {
+            "filename": "topic_38_wordcloud_5896.png",
+            "path": "word_clouds/topic_38_wordcloud_5896.png",
+            "topic_id": 37
+        }
+    ]
 }

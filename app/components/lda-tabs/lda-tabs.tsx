@@ -56,7 +56,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
     );
   }
 
-  const { coherence_plot, perplexity_plot, topic_images, network_img_url, pyldavis_html } = ldaResponse;
+  const { coherence_plot, perplexity_plot, topic_images, network_img_url, pyldavis_html, wordcloud_paths } = ldaResponse;
 
   function handleDownloadChart(chartUrl?: string) {
     if (chartUrl) {
@@ -75,6 +75,21 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
     } else {
       console.error('No chart URL available for download.');
       // Optionally, show a toast notification to the user
+    }
+  }
+
+  let baseApiFilesUrl: string | null = null;
+  let sessionId: string | null = null;
+
+  const sourceUrlForParams = network_img_url || (topic_images && topic_images.length > 0 && topic_images[0].url) || null;
+
+  if (sourceUrlForParams) {
+    try {
+      const exampleUrl = new URL(sourceUrlForParams.replace(/^http:\/\//i, 'https://'));
+      sessionId = exampleUrl.searchParams.get('session_id');
+      baseApiFilesUrl = `${exampleUrl.protocol}//${exampleUrl.host}/api/files/`;
+    } catch (e) {
+      console.error("Error parsing source URL for word cloud base URL:", e);
     }
   }
 
@@ -285,15 +300,28 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
             <CardTitle className="text-base sm:text-lg font-semibold">Topic Word Clouds</CardTitle>
             <CardDescription className="text-xs sm:text-sm">Word cloud representation for each identified topic.</CardDescription>
           </CardHeader>
-          <CardContent className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map(topicIndex => (
-              <div key={topicIndex} className="border rounded-lg p-2 bg-white">
-                <h3 className="text-sm font-medium text-gray-700 mb-1.5 px-1">Topic {topicIndex}</h3>
-                <div className="border rounded-lg aspect-[4/3] bg-slate-50 flex items-center justify-center text-gray-400 text-xs">
-                  Cloud for Topic {topicIndex}
-                </div>
-              </div>
-            ))}
+          <CardContent className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 p-3 sm:p-4">
+            {baseApiFilesUrl && wordcloud_paths && wordcloud_paths.length > 0 ? (
+              wordcloud_paths.map(wc => {
+                const imageUrl = `${baseApiFilesUrl}${wc.path}?download=false${sessionId ? `&session_id=${sessionId}` : ''}`.replace(/^http:\/\//i, 'https://');
+                return (
+                  <div key={wc.path || wc.topic_id} className="border-2 rounded-lg p-2 sm:p-3 bg-white">
+                    <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-1.5 sm:mb-2 px-1">Topic {wc.topic_id + 1}</h3>
+                    <div className="border border-blue-500 rounded-lg aspect-[4/3] bg-slate-50 flex items-center justify-center text-gray-400 text-xs overflow-hidden">
+                      <img 
+                        src={imageUrl} 
+                        alt={`Word cloud for Topic ${wc.topic_id + 1}`} 
+                        className="w-full h-full object-contain" 
+                      />
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="col-span-full text-center text-gray-500 py-4">
+                {(!wordcloud_paths || wordcloud_paths.length === 0) ? "No word cloud data available." : "Could not determine image URLs for word clouds."}
+              </p>
+            )}
           </CardContent>
         </Card>
       </TabsContent>
