@@ -47,7 +47,6 @@ export function AnalysisResult({ analysisData, onNext }: AnalysisResultProps) {
         const downloadUrl = wordCloudUrl.includes('?') ? wordCloudUrl + '&download=true' : wordCloudUrl + '?download=true';
         link.href = downloadUrl;
       }
-      link.target = '_blank';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
