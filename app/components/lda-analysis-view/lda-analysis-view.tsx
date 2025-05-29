@@ -10,9 +10,10 @@ import { Edit, LayoutDashboard } from "lucide-react";
 
 interface LDAAnalysisViewTabsProps {
   ldaResponse: LDAResponse | null;
+  onKeywordsUpdated: (updatedData: Partial<LDAResponse>) => void;
 }
 
-export function LDAAnalysisViewTabs({ ldaResponse }: LDAAnalysisViewTabsProps) {
+export function LDAAnalysisViewTabs({ ldaResponse, onKeywordsUpdated }: LDAAnalysisViewTabsProps) {
   if (!ldaResponse) {
     return (
       <div className="w-full max-w-5xl mt-6 flex items-center justify-center">
@@ -44,7 +45,7 @@ export function LDAAnalysisViewTabs({ ldaResponse }: LDAAnalysisViewTabsProps) {
 
       <TabsContent value="editor" className="mt-0 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         {/* LDAKeywordEditor expects ldaResponse to be non-null, which is guaranteed by the check above */}
-        <LDAKeywordEditor ldaResponse={ldaResponse} />
+        <LDAKeywordEditor ldaResponse={ldaResponse} onKeywordsUpdated={onKeywordsUpdated} />
       </TabsContent>
       <TabsContent value="visualizations" className="mt-0 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <LDATabs ldaResponse={ldaResponse} />

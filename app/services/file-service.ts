@@ -17,6 +17,14 @@ export interface ProcessLDAParams {
   maxDocFreq: string;
 }
 
+export interface EditLDAKeywordsParams {
+  topic_id: number;
+  edited_words?: Array<{ original: string; new: string }>;
+  removed_words?: string[];
+  chart_style?: string;
+  network_style?: string;
+}
+
 export const fileService = {
   upload: async (file: File) => {
     const formData = new FormData();
@@ -76,5 +84,30 @@ export const fileService = {
     };
 
     return api.post('/analyse/process', payload); // Send payload as JSON
+  },
+
+  editLDAKeywords: async (params: EditLDAKeywordsParams) => {
+    // Construct payload, ensuring optional fields are only included if provided
+    const payload: Record<string, any> = {
+      topic_id: params.topic_id,
+    };
+    if (params.edited_words && params.edited_words.length > 0) {
+      payload.edited_words = params.edited_words;
+    }
+    if (params.removed_words && params.removed_words.length > 0) {
+      payload.removed_words = params.removed_words;
+    }
+    if (params.chart_style) {
+      payload.chart_style = params.chart_style;
+    }
+    if (params.network_style) {
+      payload.network_style = params.network_style;
+    }
+    
+    // console.log("Sending payload to /api/analyse/edit_keywords:", payload);
+    // Replace with actual API call if console logging is not the final step
+    return api.post('/analyse/edit_keywords', payload);
+    // For now, just logging and returning a mock response
+    // return Promise.resolve({ success: true, message: "Keywords processed (mock response)", data: payload });
   }
 }; 

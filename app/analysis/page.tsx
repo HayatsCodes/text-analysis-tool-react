@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { AnalysisResult } from "../components/analysis-result/analysis-result";
-import { LDAKeywordEditor } from "../components/lda-keyword-editor/lda-keyword-editor";
-import Link from "next/link";
 import { useSidebarState } from "../components/sidebar-layout/sidebar-state-context";
 import { WordFrequencyForm } from "../components/word-frequency/word-frequency";
 

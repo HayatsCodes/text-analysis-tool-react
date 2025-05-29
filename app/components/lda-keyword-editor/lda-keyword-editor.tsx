@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,11 +24,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2 } from "lucide-react";
 import { LDAResponse, LDATopic, LDAKeyword } from "../../types/lda"; // Import necessary types
+import { fileService } from "../../services/file-service"; // Import fileService
 
 export interface LDAKeywordEditorProps {
-  ldaResponse: LDAResponse;
+  ldaResponse: LDAResponse | null;
+  onKeywordsUpdated: (updatedData: Partial<LDAResponse>) => void;
 }
 
 // Helper function to parse the keyword string from the backend
@@ -38,7 +49,7 @@ function parseKeywordsString(topicId: number, wordsString: string): LDAKeyword[]
     const [weightStr, keywordWithQuotes] = part.split('*');
     const weight = parseFloat(weightStr);
     // Remove surrounding quotes and potential extra escaped quotes from keyword
-    const text = keywordWithQuotes ? keywordWithQuotes.replace(/^"|"$/g, '').replace(/\"/g, '"') : "";
+    const text = keywordWithQuotes ? keywordWithQuotes.replace(/^"|"$/g, '').replace(/\"\"\"/g, '"') : "";
     return {
       id: `topic${topicId}_kw${index}`,
       text,
@@ -47,29 +58,112 @@ function parseKeywordsString(topicId: number, wordsString: string): LDAKeyword[]
   }).filter(kw => kw.text && !isNaN(kw.weight)); // Ensure keyword text exists and weight is a number
 }
 
-export function LDAKeywordEditor({ ldaResponse }: LDAKeywordEditorProps) {
-  // Parse optimal_topic_num and topics from ldaResponse
-  const initialOptimalTopics = ldaResponse.optimal_topic_num || 8; // Fallback if not present
-  const parsedAndSortedTopics: LDATopic[] = ldaResponse.topics
-    .map(topic => ({
-      id: topic.id,
-      name: `Topic ${topic.id}`,
-      keywords: parseKeywordsString(topic.id, topic.words),
-      originalWordsString: topic.words,
-    }))
-    .sort((a, b) => a.id - b.id); // Sort topics by ID in ascending order
-
-  const [optimalTopics, setOptimalTopics] = useState(initialOptimalTopics);
+export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordEditorProps) {
+  const [parsedTopics, setParsedTopics] = useState<LDATopic[]>([]);
+  const [optimalTopics, setOptimalTopics] = useState(8); // Default value
   const [isEditingOptimalTopics, setIsEditingOptimalTopics] = useState(false);
-  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(
-    parsedAndSortedTopics.length > 0 ? parsedAndSortedTopics[0].id : null
-  );
+  const [selectedTopicId, setSelectedTopicId] = useState<number | null>(null);
+  const [editingKeyword, setEditingKeyword] = useState<LDAKeyword | null>(null);
+  const [newKeywordText, setNewKeywordText] = useState("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isSavingKeyword, setIsSavingKeyword] = useState(false);
 
-  const selectedTopicData = parsedAndSortedTopics.find(t => t.id === selectedTopicId) || 
-                          (parsedAndSortedTopics.length > 0 ? parsedAndSortedTopics[0] : null);
+  useEffect(() => {
+    const topicsArray = ldaResponse?.topics;
+    const optimalTopicNum = ldaResponse?.optimal_topic_num;
+
+    if (topicsArray && Array.isArray(topicsArray)) {
+      const newParsedTopics = topicsArray
+        .map(topic => ({
+          id: topic.id,
+          name: `Topic ${topic.id}`,
+          keywords: parseKeywordsString(topic.id, topic.words),
+          originalWordsString: topic.words,
+        }))
+        .sort((a, b) => a.id - b.id);
+      setParsedTopics(newParsedTopics);
+
+      const currentSelectionIsValid = newParsedTopics.some(topic => topic.id === selectedTopicId);
+      if (!currentSelectionIsValid) {
+        setSelectedTopicId(newParsedTopics.length > 0 ? newParsedTopics[0].id : null);
+      }
+    } else {
+      setParsedTopics([]);
+      setSelectedTopicId(null);
+    }
+    setOptimalTopics(optimalTopicNum || 8);
+
+  }, [ldaResponse]); // Dependency array only on ldaResponse
+
+  const selectedTopicData = useMemo(() => {
+    // Ensure selectedTopicId is valid for the current parsedTopics
+    if (selectedTopicId === null) return null;
+    const topic = parsedTopics.find(t => t.id === selectedTopicId);
+    if (topic) return topic;
+    // If selectedTopicId is not found (e.g. after topics update), return first topic or null
+    return parsedTopics.length > 0 ? parsedTopics[0] : null;
+  }, [parsedTopics, selectedTopicId]);
+
+  async function handleSaveEditedKeyword() {
+    if (!editingKeyword || selectedTopicId === null || isSavingKeyword) return;
+
+    setIsSavingKeyword(true);
+    console.log(`Editing keyword: ${editingKeyword.text} to ${newKeywordText} in topic ${selectedTopicId}`);
+    try {
+      const response = await fileService.editLDAKeywords({
+        topic_id: selectedTopicId,
+        edited_words: [{ original: editingKeyword.text, new: newKeywordText }],
+      });
+      onKeywordsUpdated(response);
+      
+      setParsedTopics(prevTopics => 
+        prevTopics.map(topic => 
+          topic.id === selectedTopicId 
+            ? { 
+                ...topic, 
+                keywords: topic.keywords.map(kw => 
+                  kw.id === editingKeyword.id ? { ...kw, text: newKeywordText } : kw
+                ) 
+              } 
+            : topic
+        )
+      );
+      setIsEditDialogOpen(false);
+      setEditingKeyword(null);
+      setNewKeywordText("");
+    } catch (error) {
+      console.error("Failed to edit keyword:", error);
+      // Handle error (e.g., show a notification)
+    } finally {
+      setIsSavingKeyword(false);
+    }
+  }
+
+  async function handleDeleteKeyword(keywordToDelete: LDAKeyword) {
+    if (selectedTopicId === null) return;
+
+    console.log(`Deleting keyword: ${keywordToDelete.text} from topic ${selectedTopicId}`);
+    try {
+      const response = await fileService.editLDAKeywords({
+        topic_id: selectedTopicId,
+        removed_words: [keywordToDelete.text],
+      });
+      onKeywordsUpdated(response);
+      
+    } catch (error) {
+      console.error("Failed to delete keyword:", error);
+      // Handle error
+    }
+  }
+
+  function openEditDialog(keyword: LDAKeyword) {
+    setEditingKeyword(keyword);
+    setNewKeywordText(keyword.text);
+    setIsEditDialogOpen(true);
+  }
 
   // Handle case where there might be no topics
-  if (!parsedAndSortedTopics || parsedAndSortedTopics.length === 0) {
+  if (!parsedTopics || parsedTopics.length === 0) {
     return (
       <Card className="w-full max-w-5xl mt-6 shadow-lg">
         <CardHeader>
@@ -152,7 +246,7 @@ export function LDAKeywordEditor({ ldaResponse }: LDAKeywordEditorProps) {
                   <SelectValue placeholder="Select a topic" />
                 </SelectTrigger>
                 <SelectContent>
-                  {parsedAndSortedTopics.map((topic) => (
+                  {parsedTopics.map((topic) => (
                     <SelectItem key={topic.id} value={String(topic.id)}>
                       {topic.name}
                     </SelectItem>
@@ -192,10 +286,10 @@ export function LDAKeywordEditor({ ldaResponse }: LDAKeywordEditorProps) {
                     <TableCell className="text-right text-gray-600 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm">{keyword.weight.toFixed(4)}</TableCell>
                     <TableCell className="text-center px-2 py-2 sm:px-4 sm:py-3">
                       <div className="flex gap-1.5 sm:gap-2 justify-center">
-                        <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50">
+                        <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50" onClick={() => openEditDialog(keyword)}>
                           <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
-                        <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-red-600 border-red-500 hover:bg-red-50">
+                        <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-red-600 border-red-500 hover:bg-red-50" onClick={() => handleDeleteKeyword(keyword)}>
                           <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                       </div>
@@ -207,6 +301,39 @@ export function LDAKeywordEditor({ ldaResponse }: LDAKeywordEditorProps) {
           </div>
         </div>
       </CardContent>
+      {/* Edit Keyword Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Keyword</DialogTitle>
+            <DialogDescription>
+              Make changes to your keyword here. Click save when you're done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label htmlFor="keyword-text" className="text-right">
+                Keyword
+              </label>
+              <Input
+                id="keyword-text"
+                value={newKeywordText}
+                onChange={(e) => setNewKeywordText(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+               <Button type="button" variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="button" onClick={handleSaveEditedKeyword} disabled={isSavingKeyword}>
+              {isSavingKeyword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSavingKeyword ? "Saving..." : "Save changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 } 

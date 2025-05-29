@@ -17,9 +17,21 @@ export default function LDAPage() {
     setCurrentChild("lda");
   }, [setCurrentSection, setCurrentChild]);
 
+  // Optional: For debugging - Log ldaData whenever it changes
+  useEffect(() => {
+    console.log("LDAPage: ldaData updated", ldaData);
+  }, [ldaData]);
+
   function handleLdaProcessed(data: LDAResponse) {
-    setLdaData(data);
+    setLdaData(data); // Initial processing sets the whole data
     setShowForm(false);
+  }
+
+  function handleKeywordsUpdated(updatedFields: Partial<LDAResponse>) {
+    setLdaData(prevLdaData => {
+      if (!prevLdaData) return updatedFields as LDAResponse; // Should not happen if called after initial processing
+      return { ...prevLdaData, ...updatedFields };
+    });
   }
   
   function handleReset() {
@@ -35,7 +47,7 @@ export default function LDAPage() {
           {/* <Button onClick={handleReset} variant="outline" className="mb-4">
             New Analysis (Back to Form)
           </Button> */}
-          <LDAAnalysisViewTabs ldaResponse={ldaData} />
+          <LDAAnalysisViewTabs ldaResponse={ldaData} onKeywordsUpdated={handleKeywordsUpdated} />
         </div>
       )}
     </div>
