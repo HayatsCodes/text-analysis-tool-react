@@ -36,6 +36,7 @@ import {
 import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2 } from "lucide-react";
 import { LDAResponse, LDATopic, LDAKeyword } from "../../types/lda"; // Import necessary types
 import { fileService } from "../../services/file-service"; // Import fileService
+import toast from 'react-hot-toast'; // Import react-hot-toast
 
 export interface LDAKeywordEditorProps {
   ldaResponse: LDAResponse | null;
@@ -67,6 +68,7 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
   const [newKeywordText, setNewKeywordText] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isSavingKeyword, setIsSavingKeyword] = useState(false);
+  const [deletingKeywordId, setDeletingKeywordId] = useState<string | null>(null); // State for deleting keyword ID
 
   useEffect(() => {
     const topicsArray = ldaResponse?.topics;
@@ -108,51 +110,43 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
     if (!editingKeyword || selectedTopicId === null || isSavingKeyword) return;
 
     setIsSavingKeyword(true);
-    console.log(`Editing keyword: ${editingKeyword.text} to ${newKeywordText} in topic ${selectedTopicId}`);
+    const originalText = editingKeyword.text;
     try {
       const response = await fileService.editLDAKeywords({
         topic_id: selectedTopicId,
-        edited_words: [{ original: editingKeyword.text, new: newKeywordText }],
+        edited_words: [{ original: originalText, new: newKeywordText }],
       });
       onKeywordsUpdated(response);
-      
-      setParsedTopics(prevTopics => 
-        prevTopics.map(topic => 
-          topic.id === selectedTopicId 
-            ? { 
-                ...topic, 
-                keywords: topic.keywords.map(kw => 
-                  kw.id === editingKeyword.id ? { ...kw, text: newKeywordText } : kw
-                ) 
-              } 
-            : topic
-        )
-      );
+      toast.success(`Keyword "${originalText}" updated to "${newKeywordText}" successfully!`);
       setIsEditDialogOpen(false);
       setEditingKeyword(null);
       setNewKeywordText("");
     } catch (error) {
       console.error("Failed to edit keyword:", error);
-      // Handle error (e.g., show a notification)
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      toast.error(`Failed to update keyword "${originalText}". ${errorMessage}`);
     } finally {
       setIsSavingKeyword(false);
     }
   }
 
   async function handleDeleteKeyword(keywordToDelete: LDAKeyword) {
-    if (selectedTopicId === null) return;
+    if (selectedTopicId === null || deletingKeywordId !== null) return; // Prevent multiple simultaneous deletes
 
-    console.log(`Deleting keyword: ${keywordToDelete.text} from topic ${selectedTopicId}`);
+    setDeletingKeywordId(keywordToDelete.id);
     try {
       const response = await fileService.editLDAKeywords({
         topic_id: selectedTopicId,
         removed_words: [keywordToDelete.text],
       });
       onKeywordsUpdated(response);
-      
+      toast.success(`Keyword "${keywordToDelete.text}" deleted successfully!`);
     } catch (error) {
       console.error("Failed to delete keyword:", error);
-      // Handle error
+      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+      toast.error(`Failed to delete keyword "${keywordToDelete.text}". ${errorMessage}`);
+    } finally {
+      setDeletingKeywordId(null);
     }
   }
 
@@ -286,11 +280,27 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
                     <TableCell className="text-right text-gray-600 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm">{keyword.weight.toFixed(4)}</TableCell>
                     <TableCell className="text-center px-2 py-2 sm:px-4 sm:py-3">
                       <div className="flex gap-1.5 sm:gap-2 justify-center">
-                        <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50" onClick={() => openEditDialog(keyword)}>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50"
+                          onClick={() => openEditDialog(keyword)}
+                          disabled={deletingKeywordId !== null || isSavingKeyword} // Disable if any delete/save is in progress
+                        >
                           <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
-                        <Button variant="outline" size="icon" className="h-6 w-6 sm:h-7 sm:w-7 text-red-600 border-red-500 hover:bg-red-50" onClick={() => handleDeleteKeyword(keyword)}>
-                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-6 w-6 sm:h-7 sm:w-7 text-red-600 border-red-500 hover:bg-red-50"
+                          onClick={() => handleDeleteKeyword(keyword)}
+                          disabled={deletingKeywordId === keyword.id || deletingKeywordId !== null || isSavingKeyword} // Disable if this one is deleting, or any other delete is happening, or save is in progress
+                        >
+                          {deletingKeywordId === keyword.id ? (
+                            <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                          )}
                         </Button>
                       </div>
                     </TableCell>
@@ -325,7 +335,7 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
           </div>
           <DialogFooter>
             <DialogClose asChild>
-               <Button type="button" variant="outline">Cancel</Button>
+               <Button type="button" variant="outline" disabled={isSavingKeyword}>Cancel</Button>
             </DialogClose>
             <Button type="button" onClick={handleSaveEditedKeyword} disabled={isSavingKeyword}>
               {isSavingKeyword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
