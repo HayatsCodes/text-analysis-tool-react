@@ -1,17 +1,19 @@
 "use client";
 
-import { useEffect, useCallback, memo, useState } from "react";
+import { useEffect, useCallback, memo, useState, Fragment } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useFile } from "../../contexts/file-context";
-import { Loader2, Download, Check, ArrowRight } from "lucide-react";
+import { Loader2, Download, Check, ArrowRight, X, ChevronsUpDown } from "lucide-react";
 import toast from "react-hot-toast";
 import { fileService } from "../../services/file-service";
 import { useRouter } from "next/navigation";
 
-const LANGUAGE_CONFIG = {
+export const LANGUAGE_CONFIG = {
   english: {
     analyzers: {
       spacy: "spaCy"
@@ -29,7 +31,7 @@ const LANGUAGE_CONFIG = {
   }
 } as const;
 
-type LanguageKey = keyof typeof LANGUAGE_CONFIG;
+export type LanguageKey = keyof typeof LANGUAGE_CONFIG;
 
 const ANALYZER_SETTINGS = [
   { value: "adjective", label: "형용사 (Adjective)" },
@@ -38,7 +40,7 @@ const ANALYZER_SETTINGS = [
 
 const WORD_LENGTH_OPTIONS = Array.from({ length: 11 }, (_, i) => (i + 2).toString());
 
-const POS_TAGS_OPTIONS = {
+export const POS_TAGS_OPTIONS = {
   korean: {
     'Noun': '명사',
     'Verb': '동사',
@@ -65,8 +67,8 @@ interface PreprocessingFormProps {
   setColumn: (value: string) => void;
   analyzer: string;
   setAnalyzer: (value: string) => void;
-  analyzerSetting: string;
-  setAnalyzerSetting: (value: string) => void;
+  analyzerSetting: string[];
+  setAnalyzerSetting: (value: string[] | ((prevState: string[]) => string[])) => void;
   wordLength: string;
   setWordLength: (value: string) => void;
   fileName: string;
@@ -106,7 +108,7 @@ export function PreprocessingForm({
   setColumn,
   analyzer,
   setAnalyzer,
-  analyzerSetting = Object.keys(POS_TAGS_OPTIONS.korean)[0],
+  analyzerSetting,
   setAnalyzerSetting,
   wordLength,
   setWordLength,
@@ -120,60 +122,57 @@ export function PreprocessingForm({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isProcessed, setIsProcessed] = useState(false);
   const [processedFileUrl, setProcessedFileUrl] = useState<string | null>(null);
+  const [openPosTagSelector, setOpenPosTagSelector] = useState(false);
 
   // Reset analyzer and analyzer setting when language changes
   useEffect(() => {
     const languageConfig = LANGUAGE_CONFIG[language];
     const firstAnalyzer = Object.keys(languageConfig.analyzers)[0];
-    setAnalyzer(firstAnalyzer);
+    setAnalyzer(firstAnalyzer as string);
     
-    const firstPosTag = Object.keys(POS_TAGS_OPTIONS[language])[0];
-    setAnalyzerSetting(firstPosTag);
+    // Set default POS tags for the new language as an array
+    const firstPosTagForLang = Object.keys(POS_TAGS_OPTIONS[language])[0];
+    if (firstPosTagForLang) {
+      setAnalyzerSetting([firstPosTagForLang]);
+    } else {
+      setAnalyzerSetting([]);
+    }
   }, [language, setAnalyzer, setAnalyzerSetting]);
 
-  // Set default filename from uploaded file
-  useEffect(() => {
-    if (fileData?.filename && !fileName) {
-      const baseName = fileData.filename.split('.')[0];
-      setFileName(`${baseName}`);
-    }
-  }, [fileData?.filename, fileName, setFileName]);
-
   const currentLanguageConfig = LANGUAGE_CONFIG[language];
-  const currentPosTags = POS_TAGS_OPTIONS[language];
+  const currentPosTagsOptions = POS_TAGS_OPTIONS[language];
 
   const handleProcess = async () => {
-    if (!column || !wordLength || !fileName) return;
+    if (!column || !wordLength || !fileName || analyzerSetting.length === 0) {
+        toast.error("Please fill in all required fields, including at least one POS tag.");
+        return;
+    }
     setIsProcessing(true);
 
-    const processPromise = new Promise(async (resolve, reject) => {
-      try {
-        const data = await fileService.process({
-          column_name: column,
-          language,
-          analyzer,
-          pos_tags: analyzerSetting,
-          min_word_length: wordLength,
-          // custom_filename: fileName
-        });
-        
-        if (data.download_url) {
-          setProcessedFileUrl(`https://analysis-app-ruud.onrender.com${data.download_url}`);
-        }
-        setIsProcessed(true);
-        resolve(data);
-      } catch (error) {
-        console.error('Processing error:', error);
-        reject(error);
-      } finally {
-        setIsProcessing(false);
-      }
+    const processPromise = fileService.process({
+        column_name: column,
+        language,
+        analyzer,
+        pos_tags: analyzerSetting,
+        min_word_length: wordLength,
+        // custom_filename: fileName
     });
 
     toast.promise(processPromise, {
       loading: 'Processing file...',
-      success: 'File processed successfully!',
-      error: 'Failed to process file. Please try again.',
+      success: (data: any) => {
+        if (data.download_url) {
+          setProcessedFileUrl(`https://analysis-app-ruud.onrender.com${data.download_url}`);
+        }
+        setIsProcessed(true);
+        return 'File processed successfully!';
+      },
+      error: (err) => {
+        console.error('Processing error:', err);
+        return 'Failed to process file. Please try again.';
+      },
+    }).finally(() => {
+      setIsProcessing(false);
     });
   };
 
@@ -181,7 +180,8 @@ export function PreprocessingForm({
     if (processedFileUrl) {
       const link = document.createElement('a');
       link.href = processedFileUrl;
-      link.download = `${fileName}`;
+      const downloadFileName = fileName || (fileData?.filename ? fileData.filename.split('.')[0] : 'processed_file');
+      link.download = `${downloadFileName}_processed.csv`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -191,6 +191,16 @@ export function PreprocessingForm({
   const handleProceedToAnalysis = () => {
     router.push('/analysis');
   };
+
+  const handlePosTagSelect = useCallback((tagKey: string) => {
+    let newAnalyzerSetting;
+    if (analyzerSetting.includes(tagKey)) {
+      newAnalyzerSetting = analyzerSetting.filter(t => t !== tagKey);
+    } else {
+      newAnalyzerSetting = [...analyzerSetting, tagKey];
+    }
+    setAnalyzerSetting(newAnalyzerSetting);
+  }, [analyzerSetting, setAnalyzerSetting]);
 
   return (
     <Card className="p-4 sm:p-6">
@@ -203,7 +213,7 @@ export function PreprocessingForm({
               </SelectTrigger>
               <SelectContent className={selectStyles.content}>
                 {Object.entries(LANGUAGE_CONFIG).map(([key, config]) => (
-                  <SelectItem key={key} value={key} className={selectStyles.item}>
+                  <SelectItem key={key} value={key as LanguageKey} className={selectStyles.item}>
                     {config.name}
                   </SelectItem>
                 ))}
@@ -241,19 +251,46 @@ export function PreprocessingForm({
             </Select>
           </FormField>
 
-          <FormField label="Analyzer Setting">
-            <Select value={analyzerSetting} onValueChange={setAnalyzerSetting}>
-              <SelectTrigger className={selectStyles.trigger}>
-                <SelectValue placeholder="분석 설정 선택" />
-              </SelectTrigger>
-              <SelectContent className={selectStyles.content}>
-                {Object.entries(currentPosTags).map(([key, value]) => (
-                  <SelectItem key={key} value={key} className={selectStyles.item}>
-                    {value} ({key})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <FormField label="POS Tags (Analyzer Setting)">
+            <Popover open={openPosTagSelector} onOpenChange={setOpenPosTagSelector}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={openPosTagSelector}
+                  className={`w-full justify-between ${selectStyles.trigger}`}
+                >
+                  <span className="truncate">
+                    {analyzerSetting.length === 0
+                      ? "Select POS tags..."
+                      : analyzerSetting.map(tagKey => currentPosTagsOptions[tagKey as keyof typeof currentPosTagsOptions] || tagKey).join(", ")}
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                <Command>
+                  <CommandInput placeholder="Search POS tags..." />
+                  <CommandList>
+                    <CommandEmpty>No POS tags found.</CommandEmpty>
+                    <CommandGroup>
+                      {Object.entries(currentPosTagsOptions).map(([tagKey, tagLabel]) => (
+                        <CommandItem
+                          key={tagKey}
+                          value={tagKey}                          
+                          onSelect={() => handlePosTagSelect(tagKey)}
+                        >
+                          <Check
+                            className={`mr-2 h-4 w-4 ${analyzerSetting.includes(tagKey) ? "opacity-100" : "opacity-0"}`}
+                          />
+                          {tagLabel} ({tagKey})
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </FormField>
 
           <FormField label="Word Length">
@@ -280,7 +317,7 @@ export function PreprocessingForm({
         <div className="flex justify-center gap-4 pt-4">
           <Button
             onClick={handleProcess}
-            disabled={!column || !wordLength || !fileName || isProcessing || isProcessed}
+            disabled={!column || !wordLength || !fileName || isProcessing || isProcessed || analyzerSetting.length === 0}
             className={`rounded-[45px] px-8 py-2 text-sm min-w-[120px] ${
               isProcessed 
                 ? 'bg-transparent text-green-600 border border-green-600 hover:bg-green-50'

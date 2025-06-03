@@ -9,10 +9,6 @@ import { useFile } from "../contexts/file-context";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const languages = ["Korean", "English"];
-const analyzers = ["Hannanum", "Komoran"];
-const analyzerSettings = ["Adjective", "Noun"];
-
 function PreprocessingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,7 +19,7 @@ function PreprocessingPageContent() {
   const [language, setLanguage] = useState<"korean" | "english">("korean");
   const [column, setColumn] = useState("");
   const [analyzer, setAnalyzer] = useState("");
-  const [analyzerSetting, setAnalyzerSetting] = useState("adjective");
+  const [analyzerSetting, setAnalyzerSetting] = useState<string[]>([]);
   const [wordLength, setWordLength] = useState("");
   const [fileName, setFileName] = useState("");
 
@@ -31,6 +27,11 @@ function PreprocessingPageContent() {
     setCurrentSection("preprocessing");
     setCurrentChild(null);
   }, [setCurrentSection, setCurrentChild]);
+
+  useEffect(() => {
+    setAnalyzer("");
+    setAnalyzerSetting([]);
+  }, [language]);
 
   useEffect(() => {
     const columnsParam = searchParams.get("columns");
@@ -46,9 +47,13 @@ function PreprocessingPageContent() {
 
   useEffect(() => {
     if (fileData?.filename) {
-      setFileName(fileData.filename);
+      const nameParts = fileData.filename.split('.');
+      const baseName = nameParts.length > 1 ? nameParts.slice(0, -1).join('.') : fileData.filename;
+      setFileName(baseName);
+    } else {
+      setFileName("");
     }
-  }, [fileData?.filename]);
+  }, [fileData]);
 
   useEffect(() => {
     if (availableColumns.length > 0) {

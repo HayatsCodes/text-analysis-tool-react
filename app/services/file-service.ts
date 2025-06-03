@@ -39,13 +39,17 @@ export const fileService = {
     column_name: string;  
     language: string;
     analyzer: string;
-    pos_tags: string;
+    pos_tags: string | string[];
     min_word_length: string;
     // custom_filename: string;
   }) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value);
+      if (key === 'pos_tags' && Array.isArray(value)) {
+        formData.append('pos_tags', JSON.stringify(value));
+      } else {
+        formData.append(key, String(value));
+      }
     });
 
     return api.post('/process', formData, {
@@ -62,13 +66,7 @@ export const fileService = {
   }: ProcessWordFrequencyParams) => {
     const formData = new FormData();
     
-    // Add required parameters
     formData.append('column_name', column_name);
-    // formData.append('selection_type', selection_type);
-    // formData.append('max_words', max_words.toString());
-    // formData.append('cloud_shape', cloud_shape);
-    // formData.append('cloud_color', cloud_color);
-
     return api.post('/analyse/analyze', formData);
   },
 
@@ -83,11 +81,10 @@ export const fileService = {
       text_column: params.column,
     };
 
-    return api.post('/analyse/process', payload); // Send payload as JSON
+    return api.post('/analyse/process', payload);
   },
 
   editLDAKeywords: async (params: EditLDAKeywordsParams) => {
-    // Construct payload, ensuring optional fields are only included if provided
     const payload: Record<string, any> = {
       topic_id: params.topic_id,
     };
@@ -103,11 +100,6 @@ export const fileService = {
     if (params.network_style) {
       payload.network_style = params.network_style;
     }
-    
-    // console.log("Sending payload to /api/analyse/edit_keywords:", payload);
-    // Replace with actual API call if console logging is not the final step
     return api.post('/analyse/edit_keywords', payload);
-    // For now, just logging and returning a mock response
-    // return Promise.resolve({ success: true, message: "Keywords processed (mock response)", data: payload });
   }
 }; 
