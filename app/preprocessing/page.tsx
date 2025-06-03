@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { PreprocessingForm } from "../components/preprocessing-form/preprocessing-form";
 import Link from "next/link";
 import { useSidebarState } from "../components/sidebar-layout/sidebar-state-context";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const languages = ["Korean", "English"];
 const analyzers = ["Hannanum", "Komoran"];
@@ -31,8 +32,19 @@ function PreprocessingPageContent() {
   }, [setCurrentSection, setCurrentChild]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      <div className="w-full max-w-xl">
+    <div className="w-full h-full flex flex-col items-center">
+      <div className="w-full max-w-xl mt-4 mb-4 sm:mb-6 flex justify-start px-4 sm:px-0">
+        <Button 
+          variant="outline"
+          onClick={() => router.push('/')}
+          className="text-blue-600 border-blue-500 hover:bg-blue-50 hover:text-blue-700"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to upload
+        </Button>
+      </div>
+
+      <div className="w-full max-w-xl px-4 sm:px-0 pb-8">
         <PreprocessingForm
           language={language}
           setLanguage={setLanguage}

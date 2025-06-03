@@ -76,12 +76,12 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
 
     if (topicsArray && Array.isArray(topicsArray)) {
       const newParsedTopics = topicsArray
-        .map(topic => ({
-          id: topic.id,
-          name: `Topic ${topic.id}`,
-          keywords: parseKeywordsString(topic.id, topic.words),
-          originalWordsString: topic.words,
-        }))
+    .map(topic => ({
+      id: topic.id,
+      name: `Topic ${topic.id}`,
+      keywords: parseKeywordsString(topic.id, topic.words),
+      originalWordsString: topic.words,
+    }))
         .sort((a, b) => a.id - b.id);
       setParsedTopics(newParsedTopics);
 
@@ -299,7 +299,7 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
                           {deletingKeywordId === keyword.id ? (
                             <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                           ) : (
-                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                           )}
                         </Button>
                       </div>
