@@ -33,7 +33,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2 } from "lucide-react";
+import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2, DownloadCloud } from "lucide-react";
 import { LDAResponse, LDATopic, LDAKeyword } from "../../types/lda"; // Import necessary types
 import { fileService } from "../../services/file-service"; // Import fileService
 import toast from 'react-hot-toast'; // Import react-hot-toast
@@ -180,49 +180,63 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
       </CardHeader>
       <CardContent className="p-4 sm:p-6 space-y-6 sm:space-y-8">
         {/* Optimal Number of Topics Section */}
-        <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 border rounded-lg bg-slate-50">
+        <div className="space-y-3 p-3 sm:p-4 border rounded-lg bg-slate-50">
           <h3 className="text-base sm:text-lg font-medium text-gray-800">Optimal Number of Topics</h3>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <Input
-              type="number"
-              value={optimalTopics}
-              onChange={(e) => setOptimalTopics(parseInt(e.target.value, 10))}
-              className="w-20 sm:w-24 h-8 sm:h-9 focus-visible:ring-blue-500 text-sm"
-              readOnly={!isEditingOptimalTopics}
-            />
-            {isEditingOptimalTopics ? (
-              <>
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={() => setIsEditingOptimalTopics(false)}
-                  className="bg-green-600 hover:bg-green-700 text-white h-8 sm:h-9 text-xs sm:text-sm"
-                >
-                  <CheckCircle className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
-                  Save
-                </Button>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Input
+                type="number"
+                value={optimalTopics}
+                onChange={(e) => setOptimalTopics(parseInt(e.target.value, 10))}
+                className="w-20 sm:w-24 h-9 focus-visible:ring-blue-500 text-sm"
+                readOnly={!isEditingOptimalTopics}
+              />
+              {isEditingOptimalTopics ? (
+                <>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => setIsEditingOptimalTopics(false)}
+                    className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm"
+                  >
+                    <CheckCircle className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+                    Save
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { /* Potentially reset changes */ setIsEditingOptimalTopics(false);}}
+                    className="text-xs sm:text-sm"
+                  >
+                    Cancel
+                  </Button>
+                </>
+              ) : (
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => { /* Potentially reset changes */ setIsEditingOptimalTopics(false);}}
-                  className="h-8 sm:h-9 text-xs sm:text-sm"
+                  onClick={() => setIsEditingOptimalTopics(true)}
+                  className="text-blue-700 border-blue-600 hover:bg-blue-50 hover:text-blue-700 text-xs sm:text-sm"
                 >
-                  Cancel
+                  <FilePenLine className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+                  Edit
                 </Button>
-              </>
-            ) : (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsEditingOptimalTopics(true)}
-                className="text-blue-700 border-blue-600 hover:bg-blue-50 hover:text-blue-700 h-8 sm:h-9 text-xs sm:text-sm"
-              >
-                <FilePenLine className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
-                Edit
-              </Button>
-            )}
+              )}
+            </div>
+          
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => ldaResponse?.csv_download_url && window.open(ldaResponse.csv_download_url, 'blank')}
+              disabled={!ldaResponse?.csv_download_url}
+              className="bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm w-full sm:w-auto"
+            >
+              <DownloadCloud className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+              Download All
+            </Button>
           </div>
         </div>
+
 
         {/* Keyword Editor Section */}
         <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 border rounded-lg">
