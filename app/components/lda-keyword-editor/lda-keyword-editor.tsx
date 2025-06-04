@@ -33,7 +33,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2, DownloadCloud, RotateCcw } from "lucide-react";
+import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2, DownloadCloud, RotateCcw, Undo2 } from "lucide-react";
 import { LDAResponse, LDATopic, LDAKeyword } from "../../types/lda"; // Import necessary types
 import { fileService } from "../../services/file-service"; // Import fileService
 import toast from 'react-hot-toast'; // Import react-hot-toast
@@ -68,9 +68,9 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
   const [newKeywordText, setNewKeywordText] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isSavingKeyword, setIsSavingKeyword] = useState(false);
-  const [deletingKeywordId, setDeletingKeywordId] = useState<string | null>(null); // State for deleting keyword ID
   const [pendingDeletions, setPendingDeletions] = useState<string[]>([]); // For soft deletes
-  const [isApplyingDeletions, setIsApplyingDeletions] = useState(false); // Loading state for applying deletions
+  const [pendingEdits, setPendingEdits] = useState<Array<{ original: string; new: string }>>([]); // For pending edits
+  const [isApplyingChanges, setIsApplyingChanges] = useState(false); // Renamed from isApplyingDeletions
 
   useEffect(() => {
     const topicsArray = ldaResponse?.topics;
@@ -109,27 +109,26 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
   }, [parsedTopics, selectedTopicId]);
 
   async function handleSaveEditedKeyword() {
-    if (!editingKeyword || selectedTopicId === null || isSavingKeyword) return;
+    if (!editingKeyword || selectedTopicId === null) return;
 
-    setIsSavingKeyword(true);
-    const originalText = editingKeyword.text;
-    try {
-      const response = await fileService.editLDAKeywords({
-        topic_id: selectedTopicId,
-        edited_words: [{ original: originalText, new: newKeywordText }],
-      });
-      onKeywordsUpdated(response);
-      toast.success(`Keyword "${originalText}" updated to "${newKeywordText}" successfully!`);
-      setIsEditDialogOpen(false);
-      setEditingKeyword(null);
-      setNewKeywordText("");
-    } catch (error) {
-      console.error("Failed to edit keyword:", error);
-      const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-      toast.error(`Failed to update keyword "${originalText}". ${errorMessage}`);
-    } finally {
-      setIsSavingKeyword(false);
-    }
+    // No API call here directly, just stage the edit
+    setPendingEdits(prevEdits => {
+      const existingEditIndex = prevEdits.findIndex(edit => edit.original === editingKeyword.text);
+      if (existingEditIndex > -1) {
+        // Update existing pending edit
+        const updatedEdits = [...prevEdits];
+        updatedEdits[existingEditIndex] = { ...updatedEdits[existingEditIndex], new: newKeywordText };
+        return updatedEdits;
+      } else {
+        // Add new pending edit
+        return [...prevEdits, { original: editingKeyword.text, new: newKeywordText }];
+      }
+    });
+
+    toast.success(`Edit for "${editingKeyword.text}" to "${newKeywordText}" staged. Click 'Apply changes' to save.`);
+    setIsEditDialogOpen(false);
+    setEditingKeyword(null);
+    setNewKeywordText("");
   }
 
   function togglePendingDeletion(keywordText: string) {
@@ -138,32 +137,54 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
         ? prev.filter(text => text !== keywordText)
         : [...prev, keywordText]
     );
+    // If a keyword is marked for deletion, remove any pending edits for it
+    setPendingEdits(prevEdits => prevEdits.filter(edit => edit.original !== keywordText));
   }
 
-  async function handleApplyDeletions() {
-    if (selectedTopicId === null || pendingDeletions.length === 0 || isApplyingDeletions) return;
+  function cancelPendingEdit(originalKeywordText: string) {
+    setPendingEdits(prevEdits => prevEdits.filter(edit => edit.original !== originalKeywordText));
+    toast(`Pending edit for "${originalKeywordText}" cancelled.`);
+  }
 
-    setIsApplyingDeletions(true);
+  async function handleApplyAllChanges() {
+    if (selectedTopicId === null || (pendingDeletions.length === 0 && pendingEdits.length === 0) || isApplyingChanges) return;
+
+    setIsApplyingChanges(true);
     try {
-      const response = await fileService.editLDAKeywords({
-        topic_id: selectedTopicId,
-        removed_words: pendingDeletions,
-      });
+      const payload: Parameters<typeof fileService.editLDAKeywords>[0] = { topic_id: selectedTopicId };
+      if (pendingDeletions.length > 0) {
+        payload.removed_words = pendingDeletions;
+      }
+      if (pendingEdits.length > 0) {
+        payload.edited_words = pendingEdits;
+      }
+
+      const response = await fileService.editLDAKeywords(payload);
       onKeywordsUpdated(response);
-      toast.success(`${pendingDeletions.length} keyword(s) deleted successfully!`);
-      setPendingDeletions([]); // Clear pending deletions on success
+
+      let successMessages = [];
+      if (pendingEdits.length > 0) {
+        successMessages.push(`${pendingEdits.length} keyword(s) edited`);
+      }
+      if (pendingDeletions.length > 0) {
+        successMessages.push(`${pendingDeletions.length} keyword(s) deleted`);
+      }
+      toast.success(successMessages.join(' and ') + ' successfully applied!');
+
+      setPendingDeletions([]);
+      setPendingEdits([]);
     } catch (error) {
-      console.error("Failed to apply deletions:", error);
+      console.error("Failed to apply changes:", error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-      toast.error(`Failed to delete keywords. ${errorMessage}`);
+      toast.error(`Failed to apply changes. ${errorMessage}`);
     } finally {
-      setIsApplyingDeletions(false);
+      setIsApplyingChanges(false);
     }
   }
 
-  function openEditDialog(keyword: LDAKeyword) {
+  function openEditDialog(keyword: LDAKeyword, currentNewText?: string) {
     setEditingKeyword(keyword);
-    setNewKeywordText(keyword.text);
+    setNewKeywordText(currentNewText || keyword.text); // Pre-fill with pending new text if available
     setIsEditDialogOpen(true);
   }
 
@@ -282,20 +303,23 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
               <RefreshCw className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
               Refresh Keywords
             </Button>
-            {pendingDeletions.length > 0 && (
+            {(pendingDeletions.length > 0 || pendingEdits.length > 0) && (
                <Button
                 variant="destructive"
                 size="sm"
                 className="h-8 sm:h-9 text-xs sm:text-sm"
-                onClick={handleApplyDeletions}
-                disabled={isApplyingDeletions || selectedTopicId === null}
+                onClick={handleApplyAllChanges}
+                disabled={isApplyingChanges || selectedTopicId === null}
               >
-                {isApplyingDeletions ? (
+                {isApplyingChanges ? (
                   <Loader2 className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4 animate-spin" />
                 ) : (
-                  <Trash2 className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+                  <CheckCircle className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
                 )}
-                Apply Changes ({pendingDeletions.length})
+                Apply Changes 
+                {pendingEdits.length > 0 && ` (${pendingEdits.length} Edits`}
+                {pendingDeletions.length > 0 && `${pendingEdits.length > 0 ? ', ' : ' ('}${pendingDeletions.length} Deletions`}
+                {(pendingDeletions.length > 0 || pendingEdits.length > 0) && ')'}
               </Button>
             )}
             <span className="bg-blue-100 text-blue-700 text-xs rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 font-semibold">
@@ -316,38 +340,88 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
               <TableBody>
                 {selectedTopicData && selectedTopicData.keywords.map((keyword, index) => {
                   const isPendingDeletion = pendingDeletions.includes(keyword.text);
+                  const currentPendingEdit = pendingEdits.find(edit => edit.original === keyword.text);
                   return (
                   <TableRow 
                     key={keyword.id} 
-                    className={`hover:bg-slate-50/50 ${isPendingDeletion ? 'bg-red-100/50 hover:bg-red-200/60' : ''}`}
+                    className={`hover:bg-slate-50/50 
+                      ${isPendingDeletion ? 'bg-red-100/60 hover:bg-red-200/70' : ''}
+                      ${currentPendingEdit && !isPendingDeletion ? 'bg-yellow-100/60 hover:bg-yellow-200/70' : ''}
+                    `}
                   >
                     <TableCell className="font-medium text-gray-700 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm">{String(index + 1).padStart(2, '0')}</TableCell>
-                    <TableCell className={`text-gray-800 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isPendingDeletion ? 'line-through text-red-700' : ''}`}>{keyword.text}</TableCell>
-                    <TableCell className={`text-right text-gray-600 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isPendingDeletion ? 'line-through text-red-700' : ''}`}>{keyword.weight.toFixed(4)}</TableCell>
+                    <TableCell 
+                      className={`text-gray-800 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm 
+                        ${isPendingDeletion ? 'line-through text-red-700' : ''} 
+                        ${currentPendingEdit && !isPendingDeletion ? 'text-yellow-800' : ''}`}
+                    >
+                      {keyword.text}
+                      {currentPendingEdit && !isPendingDeletion && (
+                        <span className="text-xs ml-1 text-yellow-700 italic">(pending: {currentPendingEdit.new})</span>
+                      )}
+                    </TableCell>
+                    <TableCell 
+                      className={`text-right text-gray-600 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm 
+                        ${isPendingDeletion ? 'line-through text-red-700' : ''} 
+                        ${currentPendingEdit && !isPendingDeletion ? 'text-yellow-700' : ''}`}
+                    >
+                        {keyword.weight.toFixed(4)}
+                    </TableCell>
                     <TableCell className="text-center px-2 py-2 sm:px-4 sm:py-3">
                       <div className="flex gap-1.5 sm:gap-2 justify-center">
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50"
-                          onClick={() => openEditDialog(keyword)}
-                          disabled={isPendingDeletion || isApplyingDeletions || isSavingKeyword}
-                        >
-                          <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          className={`h-6 w-6 sm:h-7 sm:w-7 ${isPendingDeletion ? 'text-green-600 border-green-500 hover:bg-green-50' : 'text-red-600 border-red-500 hover:bg-red-50'}`}
-                          onClick={() => togglePendingDeletion(keyword.text)}
-                          disabled={isApplyingDeletions || isSavingKeyword} 
-                        >
-                          {isPendingDeletion ? (
+                        {isPendingDeletion ? (
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-6 w-6 sm:h-7 sm:w-7 text-green-600 border-green-500 hover:bg-green-50"
+                            onClick={() => togglePendingDeletion(keyword.text)}
+                            disabled={isApplyingChanges} 
+                          >
                             <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
-                          ) : (
-                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                          )}
-                        </Button>
+                          </Button>
+                        ) : currentPendingEdit ? (
+                          <>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50"
+                              onClick={() => openEditDialog(keyword, currentPendingEdit.new)}
+                              disabled={isApplyingChanges}
+                            >
+                              <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 sm:h-7 sm:w-7 text-gray-500 border-gray-400 hover:bg-gray-100"
+                              onClick={() => cancelPendingEdit(keyword.text)}
+                              disabled={isApplyingChanges}
+                            >
+                              <Undo2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50"
+                              onClick={() => openEditDialog(keyword, keyword.text)}
+                              disabled={isApplyingChanges || isEditDialogOpen}
+                            >
+                              <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              className="h-6 w-6 sm:h-7 sm:w-7 text-red-600 border-red-500 hover:bg-red-50"
+                              onClick={() => togglePendingDeletion(keyword.text)}
+                              disabled={isApplyingChanges} 
+                            >
+                              <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
