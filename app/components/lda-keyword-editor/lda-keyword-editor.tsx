@@ -146,6 +146,26 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
     toast(`Pending edit for "${originalKeywordText}" cancelled.`);
   }
 
+  function handleResetAllPendingChanges() {
+    if (pendingDeletions.length === 0 && pendingEdits.length === 0) return;
+
+    const numDeletions = pendingDeletions.length;
+    const numEdits = pendingEdits.length;
+
+    setPendingDeletions([]);
+    setPendingEdits([]);
+
+    let message = "Pending changes discarded. ";
+    if (numEdits > 0 && numDeletions > 0) {
+      message += `${numEdits} edit(s) and ${numDeletions} deletion(s) have been reset.`;
+    } else if (numEdits > 0) {
+      message += `${numEdits} edit(s) have been reset.`;
+    } else if (numDeletions > 0) {
+      message += `${numDeletions} deletion(s) have been reset.`;
+    }
+    toast(message + " Keywords reverted to original state.");
+  }
+
   async function handleApplyAllChanges() {
     if (selectedTopicId === null || (pendingDeletions.length === 0 && pendingEdits.length === 0) || isApplyingChanges) return;
 
@@ -294,18 +314,20 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
                 </SelectContent>
               </Select>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-blue-600 border-blue-500 hover:bg-blue-50 hover:text-blue-600 h-8 sm:h-9 text-xs sm:text-sm"
-              // onClick={() => { /* Logic to re-apply/re-fetch keywords if necessary */ }}
-            >
-              <RefreshCw className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
-              Refresh Keywords
-            </Button>
+            {(pendingDeletions.length > 0 || pendingEdits.length > 0) && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-orange-600 border-orange-500 hover:bg-orange-50 hover:text-orange-600 h-8 sm:h-9 text-xs sm:text-sm"
+                onClick={handleResetAllPendingChanges} 
+              >
+                <RotateCcw className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+                Reset Pending Changes
+              </Button>
+            )}
             {(pendingDeletions.length > 0 || pendingEdits.length > 0) && (
                <Button
-                variant="destructive"
+                variant="default"
                 size="sm"
                 className="h-8 sm:h-9 text-xs sm:text-sm"
                 onClick={handleApplyAllChanges}
