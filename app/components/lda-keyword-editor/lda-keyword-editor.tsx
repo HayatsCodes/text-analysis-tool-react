@@ -33,7 +33,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2, DownloadCloud } from "lucide-react";
+import { ArrowRight, Edit3, RefreshCw, Trash2, FilePenLine, CheckCircle, Loader2, DownloadCloud, RotateCcw } from "lucide-react";
 import { LDAResponse, LDATopic, LDAKeyword } from "../../types/lda"; // Import necessary types
 import { fileService } from "../../services/file-service"; // Import fileService
 import toast from 'react-hot-toast'; // Import react-hot-toast
@@ -69,6 +69,8 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isSavingKeyword, setIsSavingKeyword] = useState(false);
   const [deletingKeywordId, setDeletingKeywordId] = useState<string | null>(null); // State for deleting keyword ID
+  const [pendingDeletions, setPendingDeletions] = useState<string[]>([]); // For soft deletes
+  const [isApplyingDeletions, setIsApplyingDeletions] = useState(false); // Loading state for applying deletions
 
   useEffect(() => {
     const topicsArray = ldaResponse?.topics;
@@ -130,23 +132,32 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
     }
   }
 
-  async function handleDeleteKeyword(keywordToDelete: LDAKeyword) {
-    if (selectedTopicId === null || deletingKeywordId !== null) return; // Prevent multiple simultaneous deletes
+  function togglePendingDeletion(keywordText: string) {
+    setPendingDeletions(prev =>
+      prev.includes(keywordText)
+        ? prev.filter(text => text !== keywordText)
+        : [...prev, keywordText]
+    );
+  }
 
-    setDeletingKeywordId(keywordToDelete.id);
+  async function handleApplyDeletions() {
+    if (selectedTopicId === null || pendingDeletions.length === 0 || isApplyingDeletions) return;
+
+    setIsApplyingDeletions(true);
     try {
       const response = await fileService.editLDAKeywords({
         topic_id: selectedTopicId,
-        removed_words: [keywordToDelete.text],
+        removed_words: pendingDeletions,
       });
       onKeywordsUpdated(response);
-      toast.success(`Keyword "${keywordToDelete.text}" deleted successfully!`);
+      toast.success(`${pendingDeletions.length} keyword(s) deleted successfully!`);
+      setPendingDeletions([]); // Clear pending deletions on success
     } catch (error) {
-      console.error("Failed to delete keyword:", error);
+      console.error("Failed to apply deletions:", error);
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
-      toast.error(`Failed to delete keyword "${keywordToDelete.text}". ${errorMessage}`);
+      toast.error(`Failed to delete keywords. ${errorMessage}`);
     } finally {
-      setDeletingKeywordId(null);
+      setIsApplyingDeletions(false);
     }
   }
 
@@ -271,6 +282,22 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
               <RefreshCw className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
               Refresh Keywords
             </Button>
+            {pendingDeletions.length > 0 && (
+               <Button
+                variant="destructive"
+                size="sm"
+                className="h-8 sm:h-9 text-xs sm:text-sm"
+                onClick={handleApplyDeletions}
+                disabled={isApplyingDeletions || selectedTopicId === null}
+              >
+                {isApplyingDeletions ? (
+                  <Loader2 className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-1 h-3 w-3 sm:mr-1.5 sm:h-4 sm:w-4" />
+                )}
+                Apply Changes ({pendingDeletions.length})
+              </Button>
+            )}
             <span className="bg-blue-100 text-blue-700 text-xs rounded-full px-2.5 py-1 sm:px-3 sm:py-1.5 font-semibold">
               {selectedTopicData ? selectedTopicData.keywords.length : 0} keywords
             </span>
@@ -287,11 +314,16 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {selectedTopicData && selectedTopicData.keywords.map((keyword, index) => (
-                  <TableRow key={keyword.id} className="hover:bg-slate-50/50">
+                {selectedTopicData && selectedTopicData.keywords.map((keyword, index) => {
+                  const isPendingDeletion = pendingDeletions.includes(keyword.text);
+                  return (
+                  <TableRow 
+                    key={keyword.id} 
+                    className={`hover:bg-slate-50/50 ${isPendingDeletion ? 'bg-red-100/50 hover:bg-red-200/60' : ''}`}
+                  >
                     <TableCell className="font-medium text-gray-700 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm">{String(index + 1).padStart(2, '0')}</TableCell>
-                    <TableCell className="text-gray-800 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm">{keyword.text}</TableCell>
-                    <TableCell className="text-right text-gray-600 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm">{keyword.weight.toFixed(4)}</TableCell>
+                    <TableCell className={`text-gray-800 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isPendingDeletion ? 'line-through text-red-700' : ''}`}>{keyword.text}</TableCell>
+                    <TableCell className={`text-right text-gray-600 px-2 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm ${isPendingDeletion ? 'line-through text-red-700' : ''}`}>{keyword.weight.toFixed(4)}</TableCell>
                     <TableCell className="text-center px-2 py-2 sm:px-4 sm:py-3">
                       <div className="flex gap-1.5 sm:gap-2 justify-center">
                         <Button 
@@ -299,27 +331,28 @@ export function LDAKeywordEditor({ ldaResponse, onKeywordsUpdated }: LDAKeywordE
                           size="icon" 
                           className="h-6 w-6 sm:h-7 sm:w-7 text-blue-600 border-blue-500 hover:bg-blue-50"
                           onClick={() => openEditDialog(keyword)}
-                          disabled={deletingKeywordId !== null || isSavingKeyword} // Disable if any delete/save is in progress
+                          disabled={isPendingDeletion || isApplyingDeletions || isSavingKeyword}
                         >
                           <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          className="h-6 w-6 sm:h-7 sm:w-7 text-red-600 border-red-500 hover:bg-red-50"
-                          onClick={() => handleDeleteKeyword(keyword)}
-                          disabled={deletingKeywordId === keyword.id || deletingKeywordId !== null || isSavingKeyword} // Disable if this one is deleting, or any other delete is happening, or save is in progress
+                          className={`h-6 w-6 sm:h-7 sm:w-7 ${isPendingDeletion ? 'text-green-600 border-green-500 hover:bg-green-50' : 'text-red-600 border-red-500 hover:bg-red-50'}`}
+                          onClick={() => togglePendingDeletion(keyword.text)}
+                          disabled={isApplyingDeletions || isSavingKeyword} 
                         >
-                          {deletingKeywordId === keyword.id ? (
-                            <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                          {isPendingDeletion ? (
+                            <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
                           ) : (
-                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                           )}
                         </Button>
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
