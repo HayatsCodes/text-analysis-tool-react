@@ -95,7 +95,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
 
   return (
     <Tabs defaultValue="model" className="w-full max-w-5xl mt-4 sm:mt-6 pb-6">
-      <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 mb-3 sm:mb-4 gap-1 sm:gap-2 border border-black h-auto">
+      <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 mb-3 sm:mb-4 gap-1 sm:gap-2 border border-black h-auto">
         <TabsTrigger value="model" className="flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Model Score
         </TabsTrigger>
@@ -105,9 +105,9 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
         <TabsTrigger value="chart" className="flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <PieChart className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Topic Chart
         </TabsTrigger>
-        <TabsTrigger value="network" className="flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
+        {/* <TabsTrigger value="network" className="flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <NetworkIcon className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Network
-        </TabsTrigger>
+        </TabsTrigger> */}
         <TabsTrigger value="cloud" className="flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 py-2 sm:py-2.5 text-xs sm:text-sm cursor-pointer transition-colors duration-200 ease-in-out hover:bg-blue-100 data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:hover:bg-blue-700">
           <Cloud className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> Word Cloud
         </TabsTrigger>
@@ -257,7 +257,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
         </Card>
       </TabsContent>
 
-      <TabsContent value="network" className="mt-3 sm:mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
+      {/* <TabsContent value="network" className="mt-3 sm:mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
           <CardHeader className="p-3 sm:p-4 pb-2 sm:pb-3">
             <CardTitle className="text-base sm:text-lg font-semibold">Topic-Keyword Network</CardTitle>
@@ -292,7 +292,7 @@ export function LDATabs({ ldaResponse }: LDATabsProps) {
             </div>
           </CardContent>
         </Card>
-      </TabsContent>
+      </TabsContent> */}
 
       <TabsContent value="cloud" className="mt-3 sm:mt-4 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:duration-300">
         <Card className="shadow-md">
