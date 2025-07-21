@@ -64,7 +64,7 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
   const [format, setFormat] = useState<CloudShapeType>("rectangle");
   const [selectionMethod, setSelectionMethod] = useState<SelectionMethodType>("top_n");
   const [colors, setColors] = useState<BackendCloudColorType>("blue"); // Default to a valid theme
-  const [maxWords, setMaxWords] = useState("50");
+  const [maxWords, setMaxWords] = useState("10");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   async function handleAnalyze() {
@@ -160,7 +160,7 @@ export function WordFrequencyForm({ onAnalyzed }: WordFrequencyFormProps) {
                 value={maxWords}
                 onChange={e => setMaxWords(e.target.value)}
                 className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="50"
+                placeholder="10"
                 min={1}
                 max={200}
               />
