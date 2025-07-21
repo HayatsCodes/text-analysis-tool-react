@@ -40,17 +40,31 @@ export function SelectColumn() {
         {fileData.columns.map((column) => (
           <div
             key={column}
-            onClick={() => handleColumnSelect(column)}
             className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg border border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
+            onClick={() => {
+              if (selectedColumns.includes(column)) {
+                setSelectedColumns(prev => prev.filter(col => col !== column));
+              } else {
+                setSelectedColumns(prev => [...prev, column]);
+              }
+            }}
           >
             <Checkbox
               id={column}
               checked={selectedColumns.includes(column)}
-              onCheckedChange={() => handleColumnSelect(column)}
+              onClick={e => e.stopPropagation()}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setSelectedColumns(prev => [...prev, column]);
+                } else {
+                  setSelectedColumns(prev => prev.filter(col => col !== column));
+                }
+              }}
             />
             <label
               htmlFor={column}
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+              onClick={e => e.stopPropagation()}
             >
               {column}
             </label>
