@@ -22,8 +22,8 @@ export const LANGUAGE_CONFIG = {
   },
   korean: {
     analyzers: {
-      hannanum: "한나눔 (Hannanum)",
       kkma: "꼬꼬마 (Kkma)",
+      hannanum: "한나눔 (Hannanum)",
       komoran: "코모란 (Komoran)",
       okt: "Open Korean Text (Okt)"
     },
@@ -127,8 +127,13 @@ export function PreprocessingForm({
   // Reset analyzer and analyzer setting when language changes
   useEffect(() => {
     const languageConfig = LANGUAGE_CONFIG[language];
-    const firstAnalyzer = Object.keys(languageConfig.analyzers)[0];
-    setAnalyzer(firstAnalyzer as string);
+    let defaultAnalyzer: string;
+    if (language === "korean") {
+      defaultAnalyzer = "kkma";
+    } else {
+      defaultAnalyzer = Object.keys(languageConfig.analyzers)[0];
+    }
+    setAnalyzer(defaultAnalyzer);
     
     // Set default POS tags for the new language as an array
     const firstPosTagForLang = Object.keys(POS_TAGS_OPTIONS[language])[0];
@@ -276,8 +281,7 @@ export function PreprocessingForm({
                     <CommandGroup>
                       {Object.entries(currentPosTagsOptions).map(([tagKey, tagLabel]) => (
                         <CommandItem
-                          key={tagKey}
-                          value={tagKey}                          
+                          key={tagKey}                          
                           onSelect={() => handlePosTagSelect(tagKey)}
                         >
                           <Check

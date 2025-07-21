@@ -18,7 +18,7 @@ function PreprocessingPageContent() {
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [language, setLanguage] = useState<"korean" | "english">("korean");
   const [column, setColumn] = useState("");
-  const [analyzer, setAnalyzer] = useState("");
+  const [analyzer, setAnalyzer] = useState("kkma");
   const [analyzerSetting, setAnalyzerSetting] = useState<string[]>([]);
   const [wordLength, setWordLength] = useState("");
   const [fileName, setFileName] = useState("");
@@ -29,7 +29,13 @@ function PreprocessingPageContent() {
   }, [setCurrentSection, setCurrentChild]);
 
   useEffect(() => {
-    setAnalyzer("");
+    if (language === "korean") {
+      setAnalyzer("kkma");
+    } else if (language === "english") {
+      setAnalyzer("spacy");
+    } else {
+      setAnalyzer("");
+    }
     setAnalyzerSetting([]);
   }, [language]);
 
