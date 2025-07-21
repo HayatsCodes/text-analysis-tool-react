@@ -143,7 +143,7 @@ export function PreprocessingForm({
   const currentPosTagsOptions = POS_TAGS_OPTIONS[language];
 
   const handleProcess = async () => {
-    if (!column || !wordLength || !fileName || analyzerSetting.length === 0) {
+    if (!column || !fileName || analyzerSetting.length === 0) {
         toast.error("Please fill in all required fields, including at least one POS tag.");
         return;
     }
@@ -154,7 +154,7 @@ export function PreprocessingForm({
         language,
         analyzer,
         pos_tags: analyzerSetting,
-        min_word_length: wordLength,
+        min_word_length: '2',
         // custom_filename: fileName
     });
 
@@ -293,7 +293,7 @@ export function PreprocessingForm({
             </Popover>
           </FormField>
 
-          <FormField label="Word Length">
+          {/* <FormField label="Word Length">
             <Input
               type="number"
               value={wordLength}
@@ -301,7 +301,7 @@ export function PreprocessingForm({
               className="h-10 w-full border-blue-200 focus:border-blue-500 focus:ring-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               placeholder="단어 길이 입력 (2,3)"
             />
-          </FormField>
+          </FormField> */}
 
           <FormField label="File Name">
             <Input
@@ -317,7 +317,7 @@ export function PreprocessingForm({
         <div className="flex justify-center gap-4 pt-4">
           <Button
             onClick={handleProcess}
-            disabled={!column || !wordLength || !fileName || isProcessing || isProcessed || analyzerSetting.length === 0}
+            disabled={!column || !fileName || isProcessing || isProcessed || analyzerSetting.length === 0}
             className={`rounded-[45px] px-8 py-2 text-sm min-w-[120px] ${
               isProcessed 
                 ? 'bg-transparent text-green-600 border border-green-600 hover:bg-green-50'
